@@ -14,9 +14,7 @@ import numpy as np
 
 #this creates a graph of the file 
 
-import pyabf
 
-import matplotlib.pyplot as plt
 
 #Brings in the file 
 abf = pyabf.ABF("23616002.abf")
@@ -28,23 +26,29 @@ plt.plot(abf.sweepX, abf.sweepY, alpha=.3, label="original")
 
 
 #Filters the data and returns and list with the nan removed 
+# a is the array that will be filtered 
 def filter(a):
-
     sigma=10 # change this value to increase or decrease the level of filtering 
     pyabf.filter.gaussian(abf, 0)  # remove old filter
     pyabf.filter.gaussian(abf, sigma)  # apply custom sigma
     abf.setSweep(0)  # reload sweep with new filter
-    label = "sigma: %.02f" % (sigma)
-    plt.plot(abf.sweepX, abf.sweepY, alpha=.8, label=label) #this will need to change later 
-    newList=list()
-    newList= [x for x in abf.sweepY if not math.isnan(x)]
-    return newList
+   
+    indices = np.logical_not(np.isnan(abf.sweepY))
+    a = a[indices]
+    return a
+    
 
+currentFiltered = filter(abf.sweepY)
+timeFiltered =filter(abf.sweepX)
+#need to place somewhere else possibily 
+abf.setSweep(0)  # reload sweep with new filter
+label = "sigma: %.02f" % (10)
+plt.plot(abf.sweepX, abf.sweepY, alpha=.8, label=label) #this will need to change later 
 
-
-print(abf.sweepY)
-print("len Y:", len(abf.sweepY)) # prints all of the current data 
-print("len X ", len(abf.sweepX)) #prints all of the time
+print(currentFiltered)
+print(timeFiltered)
+print("len Y:", len(currentFiltered)) # prints all of the current data 
+print("len X ", len(timeFiltered)) #prints all of the time
 
 
     
