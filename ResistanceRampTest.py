@@ -49,3 +49,4 @@ def graph():
     plt.legend()
     plt.show()
 
+graph()
