@@ -5,6 +5,10 @@ import pyabf.filter
 import numpy as np
 
 
+#TO-Do 
+#split lowapss into 2 functions??
+#fix n_reg
+
 #Filters the data and returns and list with the nan removed 
 # a is the array that will be filtered 
 def low_pass(a):
@@ -25,9 +29,8 @@ def filter(lower, upper,list):
    #removes the values that are associted with NaN
    low = np.where(abf.sweepX == lower)[0][0]
    up = np.where(abf.sweepX == upper)[0][0]
-   print(low,up)
-   #list=list[low:up]
-   #return list
+   list=list[low:up]
+   return list
 
 # zoom in on an interesting region and decorate the plot
 def graph():
@@ -61,9 +64,10 @@ plt.figure(figsize=(8, 5))    #this might not need to be here
 
 
 #testing filter
-current_time = filter(20, 50, abf.sweepY)
-print("len", len(current_time))
-print(current_time)
+current_filtered = filter(20, 50, abf.sweepY)
+time_filtered = filter(20,50,abf.sweepX)
+print("len", len(current_filtered))
+print(current_filtered)
 print(abf.sweepX)
 
 
@@ -78,8 +82,8 @@ plt.plot(abf.sweepX, abf.sweepY, alpha=0.3, label="original")
 
 
 #Filter the data 
-currentFiltered = low_pass(abf.sweepY)
-timeFiltered =low_pass(abf.sweepX)
+current_lowpass = low_pass(abf.sweepY)
+time_lowpass =low_pass(abf.sweepX)
 
 #plot the filtered data 
 abf.setSweep(0)  # reload sweep with new filter
