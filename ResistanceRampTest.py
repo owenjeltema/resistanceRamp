@@ -8,6 +8,7 @@ import numpy as np
 #TO-Do 
 #split lowapss into 2 functions??
 #fix n_reg
+#fix y axis to fit the graph 
 
 #Filters the data and returns and list with the nan removed 
 # a is the array that will be filtered 
@@ -37,7 +38,7 @@ def graph():
     plt.title("Gaussian Filtering of ABF Data")
     plt.ylabel(abf.sweepLabelY)
     plt.xlabel(abf.sweepLabelX)
-    plt.axis([20.05, 50.05, -5, 10])
+    plt.axis([9.99, 20, -5, 10])
     plt.legend()
     plt.show()
 
@@ -56,21 +57,31 @@ def n_reg(time,current,n):
     plt.show()
     print(model)
 
+def averageI():
+    hold =0
+    sum=0
+    for (time, cur) in zip(abf.sweepX, abf.sweepY):
+        hold+=1
+        sum+=cur
+    return sum/hold
+
+
+#testing average 
+#test=averageI
+#print(test)
+
+#returns the index of a specific time
+def returnIndex(time):
+   value = np.where(abf.sweepX == time)[0][0]
+   return value
+
+#test return Index
+print( returnIndex(10))
+
 
 # Brings in the file
-abf = pyabf.ABF("23616002.abf")
+abf = pyabf.ABF("23626001.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
-
-
-
-#testing filter
-current_filtered = filter(20, 50, abf.sweepY)
-time_filtered = filter(20,50,abf.sweepX)
-print("len", len(current_filtered))
-print(current_filtered)
-print(abf.sweepX)
-
-
 
 
 #quad_reg
@@ -92,13 +103,6 @@ plt.plot(abf.sweepX, abf.sweepY, alpha=.8, label=label)
 
 #Create a graph of the pre and post filter data 
 graph()
-
-'''
-print(currentFiltered)
-print(timeFiltered)
-print("len Y:", len(currentFiltered)) # prints all of the current data 
-print("len X ", len(timeFiltered)) #prints all of the time
-'''
 
 
 
