@@ -3,12 +3,14 @@ import math
 import matplotlib.pyplot as plt
 import pyabf.filter
 import numpy as np
+from statistics import mean 
 
 
 #TO-Do 
 #split lowapss into 2 functions??
 #fix n_reg
 #fix y axis to fit the graph 
+#figure out time better
 
 #Filters the data and returns and list with the nan removed 
 # a is the array that will be filtered 
@@ -27,7 +29,7 @@ def low_pass(a):
 #Removes the data that is outside the lower and upper bound
 # list is the list that needs to be filtered
 def filter(lower, upper,list):
-   #removes the values that are associted with NaN
+   #removesthe values that are associted with NaN
    low = np.where(abf.sweepX == lower)[0][0]
    up = np.where(abf.sweepX == upper)[0][0]
    list=list[low:up]
@@ -57,26 +59,24 @@ def n_reg(time,current,n):
     plt.show()
     print(model)
 
-def averageI():
-    hold =0
-    sum=0
-    for (time, cur) in zip(abf.sweepX, abf.sweepY):
-        hold+=1
-        sum+=cur
-    return sum/hold
+
+#takes the last n seconds of the graph and takes the average of the current 
+#returns a list of the averages at each step
+#to-dp
+def averageI(n):
+    timeList= [9.5, 19.5,  ] #all 15 steps
+    a = []
+    for x in timeList:
+        holdList = filter(x-n,x,abf.sweepY)
+        a.append(mean(holdList))
+    return a
 
 
 #testing average 
-#test=averageI
-#print(test)
+test=averageI(1.6)
+print(test)
 
 #returns the index of a specific time
-def returnIndex(time):
-   value = np.where(abf.sweepX == time)[0][0]
-   return value
-
-#test return Index
-print( returnIndex(10))
 
 
 # Brings in the file
