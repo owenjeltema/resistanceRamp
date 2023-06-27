@@ -64,17 +64,13 @@ def n_reg(time,current,n):
 #returns a list of the averages at each step
 #to-dp
 def averageI(n):
-    timeList= [9.5, 19.5,  ] #all 15 steps
+    timeList= [9.5, 19.5] #all 15 steps
     a = []
     for x in timeList:
         holdList = filter(x-n,x,abf.sweepY)
         a.append(mean(holdList))
     return a
 
-
-#testing average 
-test=averageI(1.6)
-print(test)
 
 #returns the index of a specific time
 
@@ -83,6 +79,9 @@ print(test)
 abf = pyabf.ABF("23626001.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
 
+#testing average 
+test=averageI(1.6)
+print(test)
 
 #quad_reg
 #n_reg(abf.sweepX,abf.sweepY,2)
