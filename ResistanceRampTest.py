@@ -64,22 +64,12 @@ def n_reg(time,current,n):
 #takes the last n seconds of the graph and takes the average of the current 
 #returns a list of the averages at each step
 #to-dp
-def averageI(n):
+def averageI():
     a =[]
     indexList=[990,1990,2990,3990,4990,5990,6990,7990,8990,9990,10990,11990,12990,13990,14990]
-    '''
-    timeList= [7.5,9.5] #all 15 steps
-    #holdList = filter(8,9,abf.sweepY)
-    for x in timeList:
-        print(x)
-        holdList = filter(x-n,x,abf.sweepY)
-        print(mean(holdList))
-        #a.append(mean(holdList))
-    return a
-'''
     for x in indexList:
         print(x)
-        holdlist=abf.sweepY[x-200:x]
+        holdlist=abf.sweepY[x-50:x]
         print(mean(holdlist))
         a.append(mean(holdlist))
     return a 
@@ -89,12 +79,12 @@ def averageI(n):
 
 
 # Brings in the file
-abf = pyabf.ABF("23626001.abf")
+abf = pyabf.ABF("23626039.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
 
 #testing average 
 test =[]
-test= averageI(1.6)
+test= averageI()
 print(test)
 indexList=[990,1990,2990,3990,4990,5990,6990,7990,8990,9990,10990,11990,12990,13990,14990]
 n_reg(indexList,test,2)
