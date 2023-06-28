@@ -35,13 +35,7 @@ def filter(lower, upper,list):
    return list
 
 # zoom in on an interesting region and decorate the plot
-def graph(y1,y2):
-    plt.title("Gaussian Filtering of ABF Data")
-    plt.ylabel(abf.sweepLabelY)
-    plt.xlabel(abf.sweepLabelX)                                         
-    plt.axis([0, 160, y1, y2])
-    plt.legend()
-    plt.show()
+
 
 #quadric
 # TO-Do select only the resistnace part of the graph
@@ -51,14 +45,33 @@ def n_reg(voltage,current,n):
     #x,y, n
     model = np.poly1d(np.polyfit(voltage, current, n))
 
-    #add fitted polynomial line to scatterplot
-    polyline = np.linspace(1, 160, 50)
-    plt.scatter(voltage, current)
-    plt.plot(polyline, model(polyline))
+    #add fitted polynomial line to orignal data 
+    fig=plt.figure()
+    ax=fig.add_subplot(111, label="1")
+    ax2=fig.add_subplot(111,label="2", frame_on=False)
+    
+    #original data
+    ax.plot(abf.sweepX, abf.sweepY, alpha=0.3,label='original')
+    ax.axis([10, 160,abf.sweepY[0]-2,abf.sweepY[15990]+2])
+    ax.set_xlabel("x label 1", color="C0")
+    ax.set_ylabel("y label 1", color="C0")
+    ax.tick_params(axis='x', colors="C0")
+    ax.tick_params(axis='y', colors="C0")
+
+    #step averages 
+    ax2.scatter(voltage, current, color="C2")
+    ax2.xaxis.tick_top()
+    ax2.yaxis.tick_right()
+    ax2.set_xlabel('x label 2', color="C2")     
+    ax2.xaxis.set_label_position('top') 
+    ax2.yaxis.set_label_position('right') 
+    ax2.tick_params(axis='x', colors="C2")
+    ax2.tick_params(axis='y', colors="C2")
+
     plt.show()
     print(model)
 
-    #find the r-squared 
+ #find the r-squared 
     results={}
     yhat = model(voltage)
     ybar = np.sum(current)/len(current)
@@ -87,7 +100,7 @@ def averageI():
     return a 
 
 
-#returns the index of a specific time
+
 
 
 # Brings in the file
@@ -95,16 +108,15 @@ abf = pyabf.ABF("23626039.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
 
 #testing average 
-test =[]
-test= averageI()
-print(test)
-indexList=[0,10,15,20,30,40,50,60,70,80,90,100,120,130,140,150]
-n_reg(indexList,test,2)
+
+stepCurrent= averageI()
+print(stepCurrent)
+voltageList=[0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]
+n_reg(voltageList,stepCurrent,2)
 
 
 # plot the original data
-abf.setSweep(0)
-plt.plot(abf.sweepX, abf.sweepY, alpha=0.3,label='original')
+
 
 '''
 #plot the filtered data 
@@ -116,7 +128,7 @@ plt.plot(abf.sweepX, abf.sweepY, alpha=.8, label=label)
 
 
 #Create a graph of the pre and post filter data 
-graph(abf.sweepY[0]-2,abf.sweepY[15990]+2)
+
 
 
 
