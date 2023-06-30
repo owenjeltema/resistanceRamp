@@ -130,7 +130,7 @@ def excel(book):
 
 
 # Brings in the file
-abf = pyabf.ABF("23622039.abf")
+abf = pyabf.ABF("23626039.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
 
 #testing average 
