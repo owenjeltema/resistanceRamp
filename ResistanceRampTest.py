@@ -119,15 +119,6 @@ def filtered_average(list,range):
         print(mean(hold))
     return stepCurrent
 
-#fuction to read in the resitsance files into an array
-#for loop to flip through the differnt files and analysis the data
-# maybe instert temp into an array too 
-#read in excel
-def excel(book):
-    files=pd.read_excel(book, usecols='M')
-    #filter out the unessary stuff 
-
-
 
 # Brings in the file
 abf = pyabf.ABF("23626039.abf")
