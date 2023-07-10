@@ -103,9 +103,7 @@ def averageI(list,amount):
     a =[]
     indexList=[990,1990,2990,3990,4990,5990,6990,7990,8990,9990,10990,11990,12990,13990,14990,15990]
     for x in indexList:
-        print(x)
         holdlist=list[x-amount:x]
-        print(mean(holdlist))
         a.append(mean(holdlist))
     return a 
 
@@ -116,21 +114,20 @@ def filtered_average(list,range):
     for x in time:
         hold=filter(x-range,x,list)
         stepCurrent.append(mean(hold))
-        print(mean(hold))
     return stepCurrent
 
 
 # Brings in the file
-abf = pyabf.ABF("23626039.abf")
+abf = pyabf.ABF("23621110.abf")
 plt.figure(figsize=(8, 5))    #this might not need to be here 
 
 #testing average 
 
 stepCurrent= averageI(abf.sweepY,100)
-print(stepCurrent)
+#print(stepCurrent)
 voltageList=[0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]
 #bigger scale (better for higher temps)
-n_reg(voltageList,stepCurrent,1,2)
+n_reg(voltageList,stepCurrent,1,2.5)
 
 #code to fix scale                                                              to-do
 
@@ -144,7 +141,7 @@ if(remove!='n'):
         voltageList.pop(index)
         stepCurrent.pop(index)
 #print(stepCurrent)
-n_reg(voltageList,stepCurrent,1,1)
+n_reg(voltageList,stepCurrent,1,2.5)
 
 #plot filtered data
 #filteredCurrent=low_pass(abf.sweepY)
