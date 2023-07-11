@@ -12,11 +12,6 @@ import math
 # pip install xlrd
 # also abf
 
-
-# TO-Do
-# fix y axis to fit the graph
-# figure out time better
-
 voltageList = [
             0,
             10,
