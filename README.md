@@ -1,6 +1,6 @@
 # resistanceRamp
 
-The function of this code is to analysize the CA1 step resistance measurements, without using the PClamp software suit.
+The function of this code is to analysize the CA1 step resistance measurements, without using the PClamp software suite.
 
 There is some functionality that wasn't added but could become nessessary depending on use. The low_pass and filter methods support filtering out annomalous datapoints via guassian transformations, however they currently delete the voltages that the methods remove. The base functionality is nessessary, but means whatever list is given to the functions will not nessessarly have it's incices match the time list. This creates issues for the n_reg function, which performs much of the analysis on the abf.sweep(x,y) files. X corresponds to voltage, and Y current. 
 

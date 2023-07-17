@@ -7,29 +7,11 @@ from statistics import mean
 import os
 import math
 
+# include that other formula
 
 # need to instal
 # pip install xlrd
 # also abf
-
-voltageList = [
-            0,
-            10,
-            20,
-            30,
-            40,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            110,
-            120,
-            130,
-            140,
-            150,
-        ]
 
 
 def calculate_standard_error(data):
@@ -151,10 +133,29 @@ for file in os.listdir():
         # call read abf file
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
+        voltageList = [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100,
+            110,
+            120,
+            130,
+            140,
+            150,
+        ]
         # larger scale (better for higher temps)
-        print("enter voltages that should be removed, n = no data")
+        print("**Exit file to move into data removal or file progression**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent, 1, 2)
+        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2)
+        print("enter voltages that should be removed, n = no data")
         remove = input("Enter values:")
         if remove != "n":
             delete = remove.split()
@@ -163,9 +164,11 @@ for file in os.listdir():
                 index = voltageList.index(a)
                 voltageList.pop(index)
                 stepCurrent.pop(index)
+        print("\n", "**information after removal**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent, 1, 1)
-
+        n_reg(voltageList, stepCurrent, 2, 1), print(
+            file, "\n", "######################################", "\n"
+        )
 
 
 # plot the original data
