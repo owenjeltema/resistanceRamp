@@ -48,7 +48,6 @@ def n_reg(voltage, current, n, range, abf_num):
     # polynomial fit with degree = 2
     # x,y, n
 
-
     if(n==2):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
@@ -77,8 +76,6 @@ def n_reg(voltage, current, n, range, abf_num):
 
 
 
-
-
     # add fitted polynomial line to orignal data
     fig = plt.figure()
     ax = fig.add_subplot(111, label="1")
@@ -103,10 +100,10 @@ def n_reg(voltage, current, n, range, abf_num):
     plt.plot(polyline, model(polyline))
     plt.title("resistance Data File: " + abf_num)
 
-   
+
+    # find the slope at zero and print wanted data
 
     plt.show()
-
 
 
 # takes the last n seconds of the graph and takes the average of the current
@@ -139,6 +136,28 @@ def averageI(list, timeshift):
     return AverageTimeShiftDataAllSteps
 
 
+def fileoperation(voltageList, StepCurrent, n, file):
+    print(
+        "**Exit file to move into data removal or file progression for regression n = ",
+        n,
+        "**",
+    )
+    print(file, "n = ", n), n_reg(voltageList, stepCurrent, n, 2, file)
+
+    remove = input("Enter values:  ")
+    if remove != "n":
+        delete = remove.split()
+        for x in delete:
+            a = int(x)
+            index = voltageList.index(a)
+            voltageList.pop(index)
+            stepCurrent.pop(index)
+    print("\n", "&&information after removal for regression n = ", n, "&&")
+    n_reg(voltageList, stepCurrent, n, 2, file), print(
+        file, "\n", "######################################", "\n"
+    )
+
+
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
 for file in os.listdir():
     # Check whether file is in abf format or not
@@ -165,46 +184,13 @@ for file in os.listdir():
             150,
         ]
         # larger scale (better for higher temps)
-        print("**Exit file to move into data removal or file progression**")
-        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2, file)
-        print("enter voltages that should be removed, n = no data")
+        userfile = input("enter a file to go to it:  ")
+        if userfile == file in os.listdir():
+            fileoperation(voltageList, stepCurrent, 1, userfile)
+            fileoperation(voltageList, stepCurrent, 2, userfile)
 
-        #saves a copy of voltageList and stepCurrent before removing data
-        voltageListCopy = voltageList
-        stepCurrentCopy = stepCurrent
-
-
-        remove = input("Enter values:")
-        if remove != "n":
-            delete = remove.split()
-            for x in delete:
-                a = int(x)
-                index = voltageList.index(a)
-                voltageList.pop(index)
-                stepCurrent.pop(index)
-        print("\n", "**information after removal**")
-        n_reg(voltageList, stepCurrent,2 , 2, file), 
-        #do linear fit
-        
-        print("linear fit")
-        #delete 
-
-        linearRange= [ 90,100,110,120,130,140,150]
-        for x in linearRange:
-                a = int(x)
-                index = voltageList.index(a)
-                voltageListCopy.pop(index)
-                stepCurrentCopy.pop(index)
-
-        n_reg(voltageListCopy,stepCurrentCopy,1,2,file)
-
-    
-        
-        
-        
-        print(
-            file, "\n", "######################################", "\n"
-        )
+        fileoperation(voltageList, stepCurrent, 1, file)
+        fileoperation(voltageList, stepCurrent, 2, file)
 
 
 # plot the original data
