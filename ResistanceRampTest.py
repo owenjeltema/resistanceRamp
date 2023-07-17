@@ -6,6 +6,8 @@ import numpy as np
 from statistics import mean
 import os
 import math
+import copy
+
 
 # include that other formula
 
@@ -44,10 +46,38 @@ def filter(lower, upper, list):
 # voltage is a the voltage step list
 # current is the list of current values
 # n is the degree of polynomial and range is the scale of the y axis
-def n_reg(voltage, current, n, range, abf_num):
+def n_reg(volt, cur, n, range, abf_num):
+    voltage = copy.deepcopy(volt)
+    current = copy.deepcopy(cur)
+
     # polynomial fit with degree = 2
     # x,y, n
-    p, cov = np.polyfit(voltage, current, n, cov=True)
+
+    if n == 2:
+        p, cov = np.polyfit(voltage, current, n, cov=True)
+        model = np.poly1d(p)
+        # find the slope at zero and print wanted data
+        print("condutance nS", model[1], "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))
+
+    if n == 1:
+        linearRange = [90, 100, 110, 120, 130, 140, 150]
+        if len(voltage) > 9:
+            for x in linearRange:
+                a = int(x)
+                index = voltage.index(a)
+                voltage.pop(index)
+                current.pop(index)
+        p, cov = np.polyfit(voltage, current, n, cov=True)
+        model = np.poly1d(p)
+        # find the slope at zero and print wanted data
+        print("condutance nS at ", model[1], "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))
+        # need a linear regression
+        print(
+            "error in conductance: ",
+        )
+
 
     model = np.poly1d(p)
     # add fitted polynomial line to orignal data
@@ -76,8 +106,6 @@ def n_reg(voltage, current, n, range, abf_num):
     plt.title("resistance Data File: " + abf_num)
 
     # find the slope at zero and print wanted data
-    print("condutance nS", model[1], "resistance", pow(model[1], -1))
-    print("error in conductance: ", math.sqrt(cov[1][1]))
 
     plt.show()
 
@@ -113,48 +141,79 @@ def averageI(list, timeshift):
     return AverageTimeShiftDataAllSteps
 
 
+def fileoperation(voltageList, stepCurrent, n, file):
+    print(
+        "**Exit file to move into data removal or file progression for regression n = ",
+        n,
+        "**",
+    )
+    print(file, "n = ", n), n_reg(voltageList, stepCurrent, n, 2, file)
+
+    remove = input("Enter values:  ")
+    if remove != "no":
+        delete = remove.split()
+        for x in delete:
+            a = int(x)
+            index = voltageList.index(a)
+            voltageList.pop(index)
+            stepCurrent.pop(index)
+    print("\n", "&&information after removal for regression n = ", n, "&&")
+    n_reg(voltageList, stepCurrent, n, 2, file), print(
+        file, "\n", "######################################", "\n"
+    )
+
+
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
 for file in os.listdir():
     # Check whether file is in abf format or not
+    voltageList = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110,
+        120,
+        130,
+        140,
+        150,
+    ]
+    # THE ISSUE
+    # function requires a copy for stepcurrent and voltage every time function happens since it breaks it and can't neccessarly iterate to fix imediately.
+    # the original lets it get through first file opperation, and copy lets it get through second
+    # solution 1: new copt for every iteration before for loop incriments.
+    # solution 2: see if I can find a way to get code to go elsewhere and force the N_reg function to not break it.
     if file.endswith(".abf"):
         # call read abf file
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
-        voltageList = [
-            0,
-            10,
-            20,
-            30,
-            40,
-            50,
-            60,
-            70,
-            80,
-            90,
-            100,
-            110,
-            120,
-            130,
-            140,
-            150,
-        ]
+        voltageList1 = copy.deepcopy(voltageList)
+        stepCurrent1 = copy.deepcopy(stepCurrent)
         # larger scale (better for higher temps)
-        print("**Exit file to move into data removal or file progression**")
-        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2, file)
-        print("enter voltages that should be removed, n = no data")
-        remove = input("Enter values:")
-        if remove != "n":
-            delete = remove.split()
-            for x in delete:
-                a = int(x)
-                index = voltageList.index(a)
-                voltageList.pop(index)
-                stepCurrent.pop(index)
-        print("\n", "**information after removal**")
 
-        n_reg(voltageList, stepCurrent, 2, 2, file), print(
-            file, "\n", "######################################", "\n"
-        )
+        fileoperation(voltageList, stepCurrent, 1, file)
+        voltageList, stepCurrent = voltageList1, stepCurrent1
+        fileoperation(voltageList, stepCurrent, 2, file)
+        voltageList, stepCurrent = voltageList1, stepCurrent1
+        uinput = input("want to rerun?:  ")
+        if uinput == "yes":
+            fileoperation(voltageList, stepCurrent, 1, file)
+            voltageList, stepCurrent = voltageList1, stepCurrent1
+            fileoperation(voltageList, stepCurrent, 2, file)
+            voltageList, stepCurrent = voltageList1, stepCurrent1
+        print("want to search a specific file?  ")
+        if uinput in os.listdir():
+            fileoperation(voltageList, stepCurrent, 1, uinput)
+            voltageList, stepCurrent = voltageList1, stepCurrent1
+            fileoperation(voltageList, stepCurrent, 2, uinput)
+            voltageList, stepCurrent = voltageList1, stepCurrent1
+
 
 
 # plot the original data
