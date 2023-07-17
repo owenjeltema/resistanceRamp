@@ -162,7 +162,7 @@ for file in os.listdir():
         # larger scale (better for higher temps)
         print("**Exit file to move into data removal or file progression**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        print(file, "  "), n_reg(voltageList, stepCurrent, 1, 2,file)
+        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2,file)
         print("enter voltages that should be removed, n = no data")
         remove = input("Enter values:")
         if remove != "n":
@@ -174,7 +174,13 @@ for file in os.listdir():
                 stepCurrent.pop(index)
         print("\n", "**information after removal**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent,1 , 2, file), print(
+        n_reg(voltageList, stepCurrent,2 , 2, file), 
+        print("linear fit")
+        
+        
+        
+        
+        print(
             file, "\n", "######################################", "\n"
         )
 
