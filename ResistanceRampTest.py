@@ -60,10 +60,15 @@ def n_reg(voltage, current, n, range, abf_num):
         print("error in conductance: ", math.sqrt(cov[1][1]))
 
     if(n==1):
+        linearRange= [ 90,100,110,120,130,140,150]
+        for x in linearRange:
+                a = int(x)
+                index = voltage.index(a)
+                voltage.pop(index)
+                current.pop(index)
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         print(model)
-        #print(cov)
      # find the slope at zero and print wanted data
         print("condutance nS at ", model[1], "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[1][1]))
