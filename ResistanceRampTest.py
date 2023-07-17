@@ -56,8 +56,10 @@ def filter(lower, upper, list):
 def n_reg(voltage, current, n, range,abf_num):
     # polynomial fit with degree = 2
     # x,y, n
-    model = np.poly1d(np.polyfit(voltage, current, n))
-
+    p, cov = np.polyfit(voltage, current, n, cov=True)
+    #
+    model=np.poly1d(p)
+    #error of G = sqrt(cov[1][1])
     # add fitted polynomial line to orignal data
     fig = plt.figure()
     ax = fig.add_subplot(111, label="1")
@@ -81,6 +83,13 @@ def n_reg(voltage, current, n, range,abf_num):
     polyline = np.linspace(1, 150, 50)
     plt.plot(polyline, model(polyline))
     plt.title("resistance Data File: "+ abf_num)
+
+
+    # find the slope at zero
+    print("condutance nS", model[1], "resistance", pow(model[1], -1))
+    print("Error in conductance",math.sqrt(cov[1][1]))
+
+    #displays the graph
     plt.show()
 
     # find the r-squared
@@ -92,8 +101,7 @@ def n_reg(voltage, current, n, range,abf_num):
     results["r_squared"] = ssreg / sstot
     print(results)
 
-    # find the slope at zero
-    print("condutance nS", model[1], "resistance", pow(model[1], -1))
+    
 
 
 # takes the last n seconds of the graph and takes the average of the current
@@ -154,7 +162,7 @@ for file in os.listdir():
         # larger scale (better for higher temps)
         print("**Exit file to move into data removal or file progression**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2,file)
+        print(file, "  "), n_reg(voltageList, stepCurrent, 1, 2,file)
         print("enter voltages that should be removed, n = no data")
         remove = input("Enter values:")
         if remove != "n":
@@ -166,7 +174,7 @@ for file in os.listdir():
                 stepCurrent.pop(index)
         print("\n", "**information after removal**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent, 2, 1, file), print(
+        n_reg(voltageList, stepCurrent,1 , 2, file), print(
             file, "\n", "######################################", "\n"
         )
 
