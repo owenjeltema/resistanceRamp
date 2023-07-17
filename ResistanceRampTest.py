@@ -47,15 +47,34 @@ def filter(lower, upper, list):
 def n_reg(voltage, current, n, range, abf_num):
     # polynomial fit with degree = 2
     # x,y, n
-    if n == 1:
-        ...
-        print("condutance nS", model[1], "resistance", pow(model[1], -1))
 
-    if n == 2:
+    if(n==2):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
-        print("error in conductance: ", math.sqrt(cov[1][1]))
+        print(model)
+        print(model[1])
+        print(model[0])
+     # find the slope at zero and print wanted data
         print("condutance nS", model[1], "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))
+
+    if(n==1):
+        linearRange= [ 90,100,110,120,130,140,150]
+        for x in linearRange:
+                a = int(x)
+                index = voltage.index(a)
+                voltage.pop(index)
+                current.pop(index)
+        p, cov = np.polyfit(voltage, current, n, cov=True)
+        model = np.poly1d(p)
+        print(model)
+     # find the slope at zero and print wanted data
+        print("condutance nS at ", model[1], "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))
+        #need a linear regression
+        print("error in conductance: ", )
+
+
 
     # add fitted polynomial line to orignal data
     fig = plt.figure()
@@ -80,6 +99,7 @@ def n_reg(voltage, current, n, range, abf_num):
     polyline = np.linspace(1, 150, 50)
     plt.plot(polyline, model(polyline))
     plt.title("resistance Data File: " + abf_num)
+
 
     # find the slope at zero and print wanted data
 
@@ -174,6 +194,7 @@ for file in os.listdir():
 
 
 # plot the original data
+
 
 """
 #plot the filtered data 
