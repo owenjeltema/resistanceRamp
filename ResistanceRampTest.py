@@ -137,7 +137,9 @@ def averageI(list, timeshift):
     return AverageTimeShiftDataAllSteps
 
 
-def fileoperation(voltageList, stepCurrent, n, file):
+def fileoperation(voltList, stepList, n, file):
+    voltageList = copy.deepcopy(voltList)
+    stepCurrent = copy.deepcopy(stepList)
     print(
         "**Exit file to move into data removal or file progression for regression n = ",
         n,
@@ -181,33 +183,22 @@ for file in os.listdir():
         150,
     ]
     # THE ISSUE
-    # function requires a copy for stepcurrent and voltage every time function happens since it breaks it and can't neccessarly iterate to fix imediately.
-    # the original lets it get through first file opperation, and copy lets it get through second
-    # solution 1: new copt for every iteration before for loop incriments.
-    # solution 2: see if I can find a way to get code to go elsewhere and force the N_reg function to not break it.
+    # doesn't intterate well, needs some work with searching, rerrunning, etc
     if file.endswith(".abf"):
         # call read abf file
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
-        voltageList1 = copy.deepcopy(voltageList)
-        stepCurrent1 = copy.deepcopy(stepCurrent)
         # larger scale (better for higher temps)
         fileoperation(voltageList, stepCurrent, 1, file)
-        voltageList, stepCurrent = voltageList1, stepCurrent1
         fileoperation(voltageList, stepCurrent, 2, file)
-        voltageList, stepCurrent = voltageList1, stepCurrent1
         uinput = input("want to rerun?:  ")
         if uinput == "yes":
             fileoperation(voltageList, stepCurrent, 1, file)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
             fileoperation(voltageList, stepCurrent, 2, file)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
         print("want to search a specific file?  ")
         if uinput in os.listdir():
             fileoperation(voltageList, stepCurrent, 1, uinput)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
             fileoperation(voltageList, stepCurrent, 2, uinput)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
 
 
 # plot the original data
