@@ -53,7 +53,7 @@ def filter(lower, upper, list):
 # voltage is a the voltage step list
 # current is the list of current values
 # n is the degree of polynomial and range is the scale of the y axis
-def n_reg(voltage, current, n, range):
+def n_reg(voltage, current, n, range,abf_num):
     # polynomial fit with degree = 2
     # x,y, n
     model = np.poly1d(np.polyfit(voltage, current, n))
@@ -80,7 +80,7 @@ def n_reg(voltage, current, n, range):
     ax2.tick_params(axis="x", colors="C2")
     polyline = np.linspace(1, 150, 50)
     plt.plot(polyline, model(polyline))
-
+    plt.title("resistance Data File: "+ abf_num)
     plt.show()
 
     # find the r-squared
@@ -154,7 +154,7 @@ for file in os.listdir():
         # larger scale (better for higher temps)
         print("**Exit file to move into data removal or file progression**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2)
+        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2,file)
         print("enter voltages that should be removed, n = no data")
         remove = input("Enter values:")
         if remove != "n":
@@ -166,7 +166,7 @@ for file in os.listdir():
                 stepCurrent.pop(index)
         print("\n", "**information after removal**")
         print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent, 2, 1), print(
+        n_reg(voltageList, stepCurrent, 2, 1, file), print(
             file, "\n", "######################################", "\n"
         )
 
