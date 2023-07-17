@@ -14,15 +14,6 @@ import math
 # also abf
 
 
-def calculate_standard_error(data):
-    n = len(data)
-    mean = sum(data) / n
-    squared_diff = [(x - mean) ** 2 for x in data]
-    variance = sum(squared_diff) / (n - 1)
-    standard_error = math.sqrt(variance / n)
-    return standard_error
-
-
 # Filters the data and returns and list with the nan removed
 # a is the array that will be filtered
 def low_pass(listToFilter):
@@ -53,10 +44,11 @@ def filter(lower, upper, list):
 # voltage is a the voltage step list
 # current is the list of current values
 # n is the degree of polynomial and range is the scale of the y axis
-def n_reg(voltage, current, n, range,abf_num):
+def n_reg(voltage, current, n, range, abf_num):
     # polynomial fit with degree = 2
     # x,y, n
-    model = np.poly1d(np.polyfit(voltage, current, n))
+    p, cov = np.polyfit(voltage, current, n, cov=True)
+    model = np.poly1d(p)
 
     # add fitted polynomial line to orignal data
     fig = plt.figure()
@@ -80,20 +72,13 @@ def n_reg(voltage, current, n, range,abf_num):
     ax2.tick_params(axis="x", colors="C2")
     polyline = np.linspace(1, 150, 50)
     plt.plot(polyline, model(polyline))
-    plt.title("resistance Data File: "+ abf_num)
-    plt.show()
+    plt.title("resistance Data File: " + abf_num)
 
-    # find the r-squared
-    results = {}
-    yhat = model(voltage)
-    ybar = np.sum(current) / len(current)
-    ssreg = np.sum((yhat - ybar) ** 2)
-    sstot = np.sum((current - ybar) ** 2)
-    results["r_squared"] = ssreg / sstot
-    print(results)
-
-    # find the slope at zero
+    # find the slope at zero and print wanted data
     print("condutance nS", model[1], "resistance", pow(model[1], -1))
+    print("error in conductance: ", math.sqrt(cov[1][1]))
+
+    plt.show()
 
 
 # takes the last n seconds of the graph and takes the average of the current
@@ -153,8 +138,7 @@ for file in os.listdir():
         ]
         # larger scale (better for higher temps)
         print("**Exit file to move into data removal or file progression**")
-        print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2,file)
+        print(file, "  "), n_reg(voltageList, stepCurrent, 2, 2, file)
         print("enter voltages that should be removed, n = no data")
         remove = input("Enter values:")
         if remove != "n":
@@ -165,8 +149,7 @@ for file in os.listdir():
                 voltageList.pop(index)
                 stepCurrent.pop(index)
         print("\n", "**information after removal**")
-        print("Standard Error: ", calculate_standard_error(stepCurrent), file)
-        n_reg(voltageList, stepCurrent, 2, 1, file), print(
+        n_reg(voltageList, stepCurrent, 2, 2, file), print(
             file, "\n", "######################################", "\n"
         )
 
