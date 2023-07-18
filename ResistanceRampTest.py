@@ -162,7 +162,8 @@ def fileoperation(voltList, stepList, n, file):
 
 
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
-for file in os.listdir():
+fileDir = os.listdir()
+for file in fileDir:
     # Check whether file is in abf format or not
     voltageList = [
         0,
@@ -182,23 +183,35 @@ for file in os.listdir():
         140,
         150,
     ]
-    # THE ISSUE
-    # doesn't intterate well, needs some work with searching, rerrunning, etc
     if file.endswith(".abf"):
         # call read abf file
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
         # larger scale (better for higher temps)
-        fileoperation(voltageList, stepCurrent, 1, file)
-        fileoperation(voltageList, stepCurrent, 2, file)
-        uinput = input("want to rerun?:  ")
-        if uinput == "yes":
+        print("@@@@@@@@@@@@@@@@@@", file, "@@@@@@@@@@@@@@@@@@\n")
+        userinput = input(
+            'rerun a file: "rerun" \ncontinue to current file: "cont"  \npress enter to quickly move through files  \ngo to specific index: "number"  \n'
+        )
+        if userinput == "rerun":
+            fileoperation(voltageList, stepCurrent, 1, fileDir[fileDir.index(file) - 1])
+            fileoperation(voltageList, stepCurrent, 2, fileDir[fileDir.index(file) - 1])
+
+        elif userinput == "cont":
             fileoperation(voltageList, stepCurrent, 1, file)
             fileoperation(voltageList, stepCurrent, 2, file)
-        print("want to search a specific file?  ")
-        if uinput in os.listdir():
-            fileoperation(voltageList, stepCurrent, 1, uinput)
-            fileoperation(voltageList, stepCurrent, 2, uinput)
+        elif userinput.isnumeric() == True:
+            fileoperation(
+                voltageList,
+                stepCurrent,
+                1,
+                fileDir[fileDir.index(file) + int(userinput)],
+            )
+            fileoperation(
+                voltageList,
+                stepCurrent,
+                2,
+                fileDir[fileDir.index(file) + int(userinput)],
+            )
 
 
 # plot the original data
