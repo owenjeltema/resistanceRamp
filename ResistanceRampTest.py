@@ -57,7 +57,7 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS", model[1], "resistance", pow(model[1], -1))
+        print("condutance nS", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[1][1]))
 
     if n == 1:
@@ -71,8 +71,8 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS at ", model[1], "resistance", pow(model[1], -1))
-        print("error in conductance: ", math.sqrt(cov[1][1]))
+        print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))  # is this correct?
         # need a linear regression
         print(
             "error in conductance: ",
@@ -141,12 +141,10 @@ def averageI(list, timeshift):
     return AverageTimeShiftDataAllSteps
 
 
-def fileoperation(voltageList, stepCurrent, n, file):
-    print(
-        "**Exit file to move into data removal or file progression for regression n = ",
-        n,
-        "**",
-    )
+def fileoperation(voltList, stepList, n, file):
+    voltageList = copy.deepcopy(voltList)
+    stepCurrent = copy.deepcopy(stepList)
+    print("\n", "Data regression n = ", n, file)
     print(file, "n = ", n), n_reg(voltageList, stepCurrent, n, 2, file)
 
     remove = input("Enter values:  ")
@@ -157,14 +155,15 @@ def fileoperation(voltageList, stepCurrent, n, file):
             index = voltageList.index(a)
             voltageList.pop(index)
             stepCurrent.pop(index)
-    print("\n", "&&information after removal for regression n = ", n, "&&")
+    print("\n", "Post data regression n = ", n, file)
     n_reg(voltageList, stepCurrent, n, 2, file), print(
         file, "\n", "######################################", "\n"
     )
 
 
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
-for file in os.listdir():
+fileDir = os.listdir()
+for file in fileDir:
     # Check whether file is in abf format or not
     voltageList = [
         0,
@@ -184,35 +183,36 @@ for file in os.listdir():
         140,
         150,
     ]
-    # THE ISSUE
-    # function requires a copy for stepcurrent and voltage every time function happens since it breaks it and can't neccessarly iterate to fix imediately.
-    # the original lets it get through first file opperation, and copy lets it get through second
-    # solution 1: new copt for every iteration before for loop incriments.
-    # solution 2: see if I can find a way to get code to go elsewhere and force the N_reg function to not break it.
     if file.endswith(".abf"):
         # call read abf file
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
-        voltageList1 = copy.deepcopy(voltageList)
-        stepCurrent1 = copy.deepcopy(stepCurrent)
         # larger scale (better for higher temps)
 
-        fileoperation(voltageList, stepCurrent, 1, file)
-        voltageList, stepCurrent = voltageList1, stepCurrent1
-        fileoperation(voltageList, stepCurrent, 2, file)
-        voltageList, stepCurrent = voltageList1, stepCurrent1
-        uinput = input("want to rerun?:  ")
-        if uinput == "yes":
+        print("@@@@@@@@@@@@@@@@@@", file, "@@@@@@@@@@@@@@@@@@\n")
+        userinput = input(
+            'rerun a file: "rerun" \ncontinue to current file: "cont"  \npress enter to quickly move through files  \ngo to specific index: "number"  \n'
+        )
+        if userinput == "rerun":
+            fileoperation(voltageList, stepCurrent, 1, fileDir[fileDir.index(file) - 1])
+            fileoperation(voltageList, stepCurrent, 2, fileDir[fileDir.index(file) - 1])
+
+        elif userinput == "cont":
             fileoperation(voltageList, stepCurrent, 1, file)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
             fileoperation(voltageList, stepCurrent, 2, file)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
-        print("want to search a specific file?  ")
-        if uinput in os.listdir():
-            fileoperation(voltageList, stepCurrent, 1, uinput)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
-            fileoperation(voltageList, stepCurrent, 2, uinput)
-            voltageList, stepCurrent = voltageList1, stepCurrent1
+        elif userinput.isnumeric() == True:
+            fileoperation(
+                voltageList,
+                stepCurrent,
+                1,
+                fileDir[fileDir.index(file) + int(userinput)],
+            )
+            fileoperation(
+                voltageList,
+                stepCurrent,
+                2,
+                fileDir[fileDir.index(file) + int(userinput)],
+            )
 
 
 
