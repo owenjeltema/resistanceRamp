@@ -57,7 +57,7 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS", model[1], "resistance", pow(model[1], -1))
+        print("condutance nS", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[1][1]))
 
     if n == 1:
@@ -71,8 +71,8 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS at ", model[1], "resistance", pow(model[1], -1))
-        print("error in conductance: ", math.sqrt(cov[1][1]))
+        print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
+        print("error in conductance: ", math.sqrt(cov[1][1]))  # is this correct?
         # need a linear regression
         print(
             "error in conductance: ",
@@ -140,11 +140,7 @@ def averageI(list, timeshift):
 def fileoperation(voltList, stepList, n, file):
     voltageList = copy.deepcopy(voltList)
     stepCurrent = copy.deepcopy(stepList)
-    print(
-        "**Exit file to move into data removal or file progression for regression n = ",
-        n,
-        "**",
-    )
+    print("\n", "Data regression n = ", n, file)
     print(file, "n = ", n), n_reg(voltageList, stepCurrent, n, 2, file)
 
     remove = input("Enter values:  ")
@@ -155,7 +151,7 @@ def fileoperation(voltList, stepList, n, file):
             index = voltageList.index(a)
             voltageList.pop(index)
             stepCurrent.pop(index)
-    print("\n", "&&information after removal for regression n = ", n, "&&")
+    print("\n", "Post data regression n = ", n, file)
     n_reg(voltageList, stepCurrent, n, 2, file), print(
         file, "\n", "######################################", "\n"
     )
