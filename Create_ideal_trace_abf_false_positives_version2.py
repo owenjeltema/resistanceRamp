@@ -4,7 +4,9 @@ import numpy as np
 import pyabf
 from statistics import mean, stdev
 import pandas as pd
+#pip install XlsxWriter
 import xlsxwriter
+#python -m pip install scipy
 from scipy.stats import sem
 
 from Ideal_trace_graph_formatting_version2 import abf_make_a_graph
@@ -15,7 +17,7 @@ from ideal_trace_calculate_mean_version2 import find_means
 from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 
 #the location on your computer where you want the file and the name of the file
-location= r"C:\Users\lhaarsma\OneDrive - Calvin University\Documents\_LipidBiLayerIonChannels_research_2019onward\AlamethicinData_2022ff\22705007.xlsx"
+location= r"C:\Users\dcmou\Downloads\work\resistanceRamp\23714000.xlsx"
 
 #large spike
 spike_start= []
@@ -36,8 +38,11 @@ section_stop=[]
 #if no, it runs the false positives, shows the graph and generates the excel file
 find_false_values=no
 
-
 ideal_Y= make_ideal_Y(bin_length, net_mean, level)
+#log, yLim, bin?? as varible
+plt.hist(filtered_sweepY,bins=1000, range=(-100,600))
+plt.ylim(0, 1000)
+plt.show()
 
 if find_false_values == 1: #yes
     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
@@ -204,6 +209,7 @@ if find_false_values== 0: #no
     
     #and the ideal_Y list remade
     ideal_Y = make_ideal_Y(bin_length, net_mean, level)
+
     
     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
 
