@@ -30,6 +30,39 @@ def low_pass(listToFilter):
     listToFilter = listToFilter[listWithoutNan]
     return listToFilter
 
+#delta
+def Eq8_12(x_array):
+    length=len(x_array)
+    x_array_np=np.array(x_array)
+    return length* sum(np.square(x_array_np))-pow((sum(x_array)),2)
+
+#this calcutates A(Y-intercept)
+def Eq8_10(x_array, y_array):
+    x_array_np=np.array(x_array)
+    return (sum(np.square(x_array_np))*sum(y_array) - sum(x_array)*np.dot(x_array,y_array))/Eq8_12(x_array)
+
+#this calculates B(slope)
+def Eq8_11(x_array, y_array):
+    length=len(x_array)
+    return ((length*np.dot(x_array,y_array))-sum(x_array)*sum(y_array))/Eq8_12(x_array)
+
+#this returns the uncertainity of Y
+def Eq8_15(x_array, y_array):
+    length=len(x_array)
+    A = Eq8_10(x_array,y_array)
+    B = Eq8_11(x_array,y_array)
+    sum=0
+    for i in range(length):
+        sum+=pow(y_array[i]-A-B*x_array[i],2)
+
+
+    return math.sqrt((1/(length-2))*sum)
+
+#this returns the uncertainity of the slope
+def Eq8_17(x_array,y_array):    
+   return Eq8_15(x_array,y_array)*math.sqrt(len(x_array)/Eq8_12(x_array))
+
+
 
 # Removes the data that is outside the lower and upper bound
 # list is the list that needs to be filtered
@@ -72,10 +105,11 @@ def n_reg(volt, cur, n, range, abf_num):
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
         print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
-        print("error in conductance: ", math.sqrt(cov[1][1]))  # is this correct?
+        print("error in conductance: ", math.sqrt(cov[0][0]))  # is this correct?
         # need a linear regression
+        print("From the book Condutance ns :", Eq8_11(voltage,current))
         print(
-            "error in conductance: ",
+            "error in conductance: ", Eq8_17(voltage,current),
         )
 
 
