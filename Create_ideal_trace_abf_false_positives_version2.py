@@ -17,7 +17,7 @@ from ideal_trace_calculate_mean_version2 import find_means
 from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 
 #the location on your computer where you want the file and the name of the file
-location= r"C:\Users\dcmou\Downloads\work\resistanceRamp\23714000.xlsx"
+location= r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data\Analysis Spreadsheets\23714009.xlsx"
 
 #large spike
 spike_start= []
@@ -41,10 +41,10 @@ find_false_values=no
 
 ideal_Y= make_ideal_Y(bin_length, net_mean, level)
 #log, yLim, bin?? as varible
-plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
-plt.ylim(0, 1000)
-plt.title("File: 009")
-plt.show()
+#plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
+#plt.ylim(0, 1000)
+#plt.title("File: 009")
+#plt.show()
 
 if find_false_values == 1: #yes
     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)

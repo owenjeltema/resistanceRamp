@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 
 # -- Constants --   --      --      --      --      --      --      --      --
 
-directory = r"C:\Users\mrear\Documents\Summer 2021\Analysis Spreadsheets"       # Directory to find spreadsheets in
+directory = r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data\Analysis Spreadsheets"       # Directory to find spreadsheets in
 tolerance = 0.3         # We will collect openings of magnitude 2.6 pA +- this value
 VERBOSE = False         # Print verbose output to the console?
 show_plot = True

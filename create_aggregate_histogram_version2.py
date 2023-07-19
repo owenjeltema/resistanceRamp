@@ -16,11 +16,11 @@ import os
 # -- Constants --   --      --      --      --      --      --      --      --
 
 VERBOSE = True          # Recommended to stay True
-cutoff = 10             # Used for low-pass filter
-xmin, xmax = -1, 6
+cutoff = 1000             # Used for low-pass filter
+xmin, xmax = -1, 600
 ymin, ymax = 0, 12000   # Visual limits of the plot
 bin_size = 0.01         # Width of each bin on the histogram - must mulitply into 1 evenly, rounding is fine
-directory = r"C:\Users\mrear\Documents\Summer 2021\Log files\July 12" 
+directory = r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data" 
 # ^ This directory should contain all the ABF files to be aggregated. 
 subdir = r"\Analysis Spreadsheets"
 # ^ This should be a subdirectory of the first directory, containing
@@ -57,7 +57,7 @@ for file in os.listdir(directory):      # Iterate over every file in the named d
     abf = pyabf.ABF(abf_filename)
     duration = abf.sweepLengthSec
     time_step= duration / len(abf.sweepY)
-    cutoff = 10
+    cutoff = 1000
     filtered_sweepY= low_pass(abf.sweepY, abf.sweepX, cutoff, time_step)
     
     # This block sets zero_point to the average current of the 0th bin in an ABF file, so
@@ -113,3 +113,4 @@ plt.xlim(xmin, xmax)
 plt.ylim(ymin, ymax)
 plt.xlabel("Magnitude of sample (pA)")
 plt.ylabel("Number of occurrences")
+plt.show()
