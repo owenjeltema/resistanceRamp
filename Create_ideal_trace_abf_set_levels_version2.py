@@ -16,7 +16,7 @@ window_width = 10
 
 # the abf file
 abf = pyabf.ABF(
-    r"C:\Users\sebastian\Haarsma_Resistance_2023\resistanceRamp\data june2312\23712001.abf"
+    r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data\23714000.abf"
 )
 duration = abf.sweepLengthSec
 voltage = 135

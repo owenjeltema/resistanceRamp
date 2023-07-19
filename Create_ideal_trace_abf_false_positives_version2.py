@@ -46,9 +46,9 @@ neg_spike_stop = []
 
 
 # false_pos
-false_pos_start = []
-section_start = []
-section_stop = []
+false_pos_start = [10]
+section_start = [10]
+section_stop = [20]
 # the level at the start of the section will be filled in for the whole range
 
 # if yes, this will just display the idealized trace (without accounding for false positives) and the filtered data
@@ -58,15 +58,15 @@ find_false_values = no
 
 ideal_Y= make_ideal_Y(bin_length, net_mean, level)
 #log, yLim, bin?? as varible
-plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
-plt.ylim(0, 1000)
-plt.title("File: 009")
-plt.show()
+#plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
+#plt.ylim(0, 1000)
+#plt.title("File: 009")
+#plt.show()
 
 if find_false_values == 1:  # yes
     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
     # change_scale=input("change scale? (yes/no): ")
-    change_scale = "no"
+    change_scale = "yes"
     if change_scale == "yes":
         new_window_width = float(input("new window width: "))
         abf_make_a_graph(
