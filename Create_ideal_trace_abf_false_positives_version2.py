@@ -32,13 +32,35 @@ from ideal_trace_same_bin_version2 import same_bin
 from ideal_trace_combine_repeates_version2 import combine_repeates
 from ideal_trace_calculate_mean_version2 import find_means
 from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
+from histogram_from_abf_file import histogram 
 
 #the location on your computer where you want the file and the name of the file
 location= r"C:\Users\dcmou\Downloads\work\resistanceRamp\23714000.xlsx"
 
+#display graph and delete data
+ideal_Y= make_ideal_Y(bin_length, net_mean, level)
+abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
+
+#Allow the user to selet the data that they want to be deleted\
 # large spike
 spike_start = []
 spike_stop = []
+
+move_forward = input("Do you want to remove data? ")
+while move_forward == "yes":
+    spike_start.append(int(input("Enter starting value: ")))
+    spike_stop.append(int(input("Enter ending value: ")))
+    move_forward = input("Do you want to remove data? ")
+
+#create a histogram with the delted data 
+histogram(spike_start,spike_stop)
+
+
+
+
+
+
+
 
 # negative spike-- goes down from closed and does not change level
 neg_spike_start = []
@@ -46,9 +68,9 @@ neg_spike_stop = []
 
 
 # false_pos
-false_pos_start = [10]
-section_start = [10]
-section_stop = [20]
+false_pos_start = []
+section_start = []
+section_stop = []
 # the level at the start of the section will be filled in for the whole range
 
 # if yes, this will just display the idealized trace (without accounding for false positives) and the filtered data
@@ -57,11 +79,6 @@ section_stop = [20]
 find_false_values = no
 
 ideal_Y= make_ideal_Y(bin_length, net_mean, level)
-#log, yLim, bin?? as varible
-#plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
-#plt.ylim(0, 1000)
-#plt.title("File: 009")
-#plt.show()
 
 if find_false_values == 1:  # yes
     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
