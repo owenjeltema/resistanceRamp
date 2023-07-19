@@ -1,3 +1,4 @@
+# Dylan & Sebastian
 import matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -20,7 +21,7 @@ from Create_ideal_trace_abf_set_levels_version2 import (
 
 
 #delete data Start and stop are arrays 
-def histogram(start,stop):
+def histogram(start,stop, location, cutoff):
     i=0
     while i < len(start):
         start_index= np.where(abf.sweepX == start[i])[0][0]
@@ -34,7 +35,9 @@ def histogram(start,stop):
         #create histogram 
     plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
     plt.ylim(0, 1000)
-    plt.title("File: 009")
+    plt.title("file: " + location.split("\\")[-1].split(".")[0])
+    plt.xlabel("Occurances with " + str(cutoff) + "Hz Filtering")
+    plt.ylabel("pA")
     plt.show()
 
 

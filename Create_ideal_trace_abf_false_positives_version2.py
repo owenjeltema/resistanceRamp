@@ -4,7 +4,7 @@ import numpy as np
 import pyabf
 from statistics import mean, stdev
 import pandas as pd
-
+import os
 # pip install XlsxWriter
 import xlsxwriter
 
@@ -26,7 +26,8 @@ from Create_ideal_trace_abf_set_levels_version2 import (
     filtered_sweepY,
     net_mean,
     bins_list,
-    time_step,
+    time_step, 
+    cutoff,
 )
 from ideal_trace_same_bin_version2 import same_bin
 from ideal_trace_combine_repeates_version2 import combine_repeates
@@ -35,8 +36,10 @@ from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 from histogram_from_abf_file import histogram 
 
 #the location on your computer where you want the file and the name of the file
-location= r"C:\Users\dcmou\Downloads\work\resistanceRamp\23714000.xlsx"
-
+files = os.listdir()
+filesPath = os.getcwd()
+# location= r"C:\Users\sebastian\Haarsma_Resistance_2023\resistanceRamp\ion_data\23714000.xlsx"
+location = rf"{filesPath}\{files[0].split('.')[0]}.xlsx"
 #display graph and delete data
 ideal_Y= make_ideal_Y(bin_length, net_mean, level)
 abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
@@ -53,11 +56,7 @@ while move_forward == "yes":
     move_forward = input("Do you want to remove data? ")
 
 #create a histogram with the delted data 
-histogram(spike_start,spike_stop)
-
-
-
-
+histogram(spike_start,spike_stop, location, cutoff)
 
 
 

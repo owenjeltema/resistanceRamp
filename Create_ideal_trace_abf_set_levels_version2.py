@@ -4,6 +4,7 @@ import numpy as np
 import pyabf
 from statistics import mean, stdev
 import pandas as pd
+import os
 
 # function to determin if two values are in the same bin
 from ideal_trace_same_bin_version2 import same_bin
@@ -15,9 +16,11 @@ cutoff = 500
 window_width = 10
 
 # the abf file
-abf = pyabf.ABF(
-    r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data\23714000.abf"
-)
+abfFiles = os.listdir()
+abfFilesPath = os.getcwd()
+# abf = pyabf.ABF(r"C:\Users\sebastian\Haarsma_Resistance_2023\resistanceRamp\ion_data\23714000.abf")
+abf = pyabf.ABF(rf"{abfFilesPath}\{abfFiles[0]}")
+
 duration = abf.sweepLengthSec
 voltage = 135
 # manualy look at the graph and find values that are inbetween the levels

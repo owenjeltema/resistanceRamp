@@ -1,3 +1,4 @@
+#Dylan & Sebastian
 import pyabf
 import math
 import matplotlib.pyplot as plt
