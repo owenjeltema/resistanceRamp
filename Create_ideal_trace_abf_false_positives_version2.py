@@ -44,6 +44,7 @@ spike_stop = []
 neg_spike_start = []
 neg_spike_stop = []
 
+
 # false_pos
 false_pos_start = []
 section_start = []
@@ -59,6 +60,7 @@ ideal_Y = make_ideal_Y(bin_length, net_mean, level)
 # log, yLim, bin?? as varible
 plt.hist(filtered_sweepY, bins=1000, range=(-100, 600))
 plt.ylim(0, 1000)
+plt.title("File: 009")
 plt.show()
 
 if find_false_values == 1:  # yes
