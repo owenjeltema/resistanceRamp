@@ -9,12 +9,12 @@ import pandas as pd
 from ideal_trace_same_bin_version2 import same_bin
 yes=1
 no=0
-cutoff= 1000
+cutoff= 2000
 #window_width= 59.999
 window_width = 10
 
 #the abf file
-abf = pyabf.ABF(r"C:\Users\dcmou\Downloads\work\resistanceRamp\old_data\22630005.abf")
+abf = pyabf.ABF(r"C:\Users\dcmou\Downloads\work\resistanceRamp\ion_data\23714009.abf")
 duration=abf.sweepLengthSec
 voltage= 135
 #manualy look at the graph and find values that are inbetween the levels
