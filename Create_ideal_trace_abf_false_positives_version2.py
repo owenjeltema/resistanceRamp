@@ -25,7 +25,7 @@ from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 #set the filter level
 cutoff = 500
 bins_list = [90, 200, 300]
-voltage = 100
+voltage = 123.1
 
 
 #####################################################################################
