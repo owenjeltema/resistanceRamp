@@ -930,6 +930,8 @@ for file in files:
         "Level_5 dwell times (s)": opendwelltimes5_sec,
         "Level_6 dwell times (s)": opendwelltimes6_sec,
         "Level_7 dwell times (s)": opendwelltimes7_sec,
+        "Removed data start": spike_start,
+        "Removed data stop": spike_stop,
     }
     #    abf_data_zero = {'level': level_zero, 'index':index_zero, 'length (s)': length_zero, 'mean (pA)': mean_zero, 'levels': list_of_levels_zero, 'average length (s)': avg_length_zero, 'level means (pA)': net_mean_zero, 'level amplitude': level_amplitude_zero, 'occurrences': occurrences_zero}
     df1 = pd.DataFrame(
@@ -978,6 +980,8 @@ for file in files:
     df10 = pd.DataFrame(abf_data, columns=["Level_5 dwell times (s)"])
     df11 = pd.DataFrame(abf_data, columns=["Level_6 dwell times (s)"])
     df12 = pd.DataFrame(abf_data, columns=["Level_7 dwell times (s)"])
+    df13 = pd.DataFrame(abf_data, columns=["Removed data start", "Removed data stop"])
+  
 
     # here you will need to put the location on your computer where you want the file and the name of the file
     with pd.ExcelWriter(location, engine="xlsxwriter") as writer:
@@ -994,5 +998,6 @@ for file in files:
         df10.to_excel(writer, sheet_name="Level_5 times", index=False)
         df11.to_excel(writer, sheet_name="Level_6 times", index=False)
         df12.to_excel(writer, sheet_name="Level_7 times", index=False)
+        df13.to_excel(writer, sheet_name="Removed Data", index=False)
 
     print("done")
