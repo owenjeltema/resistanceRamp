@@ -36,14 +36,13 @@ from ideal_trace_same_bin_version2 import same_bin
 from ideal_trace_combine_repeates_version2 import combine_repeates
 from ideal_trace_calculate_mean_version2 import find_means
 from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
-from histogram_from_abf_file import histogram 
 
 
 #Global varables
 #set the filter level
 cutoff = 500 
 bins_list = [90, 200, 300]
-
+voltage = 100
 
 
 #####################################################################################
@@ -371,19 +370,25 @@ section_stop = []
 # if yes, this will just display the idealized trace (without accounding for false positives) and the filtered data
 # it then gives the option to change the scale in order to identify the locations of false positives
 # if no, it runs the false positives, shows the graph and generates the excel file
-find_false_values = no
 
-ideal_Y= make_ideal_Y(bin_length, net_mean, level)
 
-if find_false_values == 1:  # yes
-    abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
-    # change_scale=input("change scale? (yes/no): ")
-    change_scale = "yes"
-    if change_scale == "yes":
-        new_window_width = float(input("new window width: "))
-        abf_make_a_graph(
-            new_window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list
-        )
+
+# find_false_values = no
+
+# ideal_Y= make_ideal_Y(bin_length, net_mean, level)
+
+# if find_false_values == 1:  # yes
+#     abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
+#     # change_scale=input("change scale? (yes/no): ")
+#     change_scale = "yes"
+#     if change_scale == "yes":
+#         new_window_width = float(input("new window width: "))
+#         abf_make_a_graph(
+#             new_window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list
+#         )
+
+
+
 
 # if find_false_values == 0:  # no
     # runs this code if there is a large noise spike
@@ -514,44 +519,14 @@ def false_positives():
             v = v + 1
         e = e + 1
 
-    # removing false events creates more instances where several "events" in a row are the same event, at the same level, this calls the routine to combine those
-    result = combine_repeates(bin_mean, bin_length, bin_index, level)
-    # the rountine returns a list of results, the bin_mean, bin_length, bin_index, and level lists
-    bin_mean = result[0]
-    bin_length = result[1]
-    bin_index = result[2]
-    level = result[3]
-
-    # with the false events reassigned to their appropriate level, the weighted mean has to be recalculated
-    result = find_means(bins_list, level, bin_mean, bin_length)
-    net_mean = result[0]
-    avg_length = result[1]
-    mean_length = result[2]
-    stdev_length = result[3]
-    sterrmean_length = result[4]
-    opendwelltimes1 = result[5]
-    opendwelltimes2 = result[6]
-    opendwelltimes3 = result[7]
-    opendwelltimes4 = result[8]
-    opendwelltimes5 = result[9]
-    opendwelltimes6 = result[10]
-    opendwelltimes7 = result[11]
-
-    #    print(opendwelltimes1)
-
-    #    print(net_mean)
-    #    print(avg_length)
-    #    print(mean_length)
-    #    print(stdev_length)
-    #    print(sterrmean_length)
-
-    # print(level)
 
     # and the ideal_Y list remade
 for file in files:
+    if(file.endswith(".xlsx")):
+       continue
     print(file)
     location = rf"{filesPath}\{file}.xlsx"
-    abf = rf"{filesPath}\{file}.abf"
+    abf = rf"{filesPath}\{file}"
     set_level(abf)
     while True:
         userResponse =input("What would you like to do?")
@@ -589,6 +564,40 @@ for file in files:
             elif ur2 == "fn":
                 ur3 = input("what file would you like to go to? (year, month, day, file num )")
                 location = rf"{filesPath}\{ur3}.xlsx"
+
+
+        # removing false events creates more instances where several "events" in a row are the same event, at the same level, this calls the routine to combine those
+    result = combine_repeates(bin_mean, bin_length, bin_index, level)
+    # the rountine returns a list of results, the bin_mean, bin_length, bin_index, and level lists
+    bin_mean = result[0]
+    bin_length = result[1]
+    bin_index = result[2]
+    level = result[3]
+
+    # with the false events reassigned to their appropriate level, the weighted mean has to be recalculated
+    result = find_means(bins_list, level, bin_mean, bin_length)
+    net_mean = result[0]
+    avg_length = result[1]
+    mean_length = result[2]
+    stdev_length = result[3]
+    sterrmean_length = result[4]
+    opendwelltimes1 = result[5]
+    opendwelltimes2 = result[6]
+    opendwelltimes3 = result[7]
+    opendwelltimes4 = result[8]
+    opendwelltimes5 = result[9]
+    opendwelltimes6 = result[10]
+    opendwelltimes7 = result[11]
+
+    #    print(opendwelltimes1)
+
+    #    print(net_mean)
+    #    print(avg_length)
+    #    print(mean_length)
+    #    print(stdev_length)
+    #    print(sterrmean_length)
+
+    # print(level)
 
 
     # ideal_Y = make_ideal_Y(bin_length, net_mean, level)
