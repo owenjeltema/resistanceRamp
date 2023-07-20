@@ -524,11 +524,11 @@ def false_positives():
 for file in files:
     if(file.endswith(".xlsx")):
        continue
-    print(file)
     location = rf"{filesPath}\{file}.xlsx"
     abf = rf"{filesPath}\{file}"
     set_level(abf)
     while True:
+        print(file)
         userResponse =input("What would you like to do?")
         if userResponse == "done":
             break
@@ -561,9 +561,15 @@ for file in files:
             if ur2 == "index":
                 ur3 = input("what index would you like to go to? ")
                 location = rf"{filesPath}\{files[int(ur3)].split('.')[0]}.xlsx"
+                abf = rf"{filesPath}\{files[int(ur3)]}"
+                set_level(abf)
+                file = files[int(ur3)]
             elif ur2 == "fn":
                 ur3 = input("what file would you like to go to? (year, month, day, file num )")
                 location = rf"{filesPath}\{ur3}.xlsx"
+                abf = rf"{filesPath}\{ur3}.abf"
+                set_level(abf)
+                file = ur3 + ".abf"
 
 
         # removing false events creates more instances where several "events" in a row are the same event, at the same level, this calls the routine to combine those
