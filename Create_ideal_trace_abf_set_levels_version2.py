@@ -20,7 +20,6 @@ abfFiles = os.listdir()
 abfFilesPath = os.getcwd()
 # abf = pyabf.ABF(r"C:\Users\sebastian\Haarsma_Resistance_2023\resistanceRamp\ion_data\23714000.abf")
 abf = pyabf.ABF(rf"{abfFilesPath}\{abfFiles[0]}")
-
 duration = abf.sweepLengthSec
 voltage = 135
 # manualy look at the graph and find values that are inbetween the levels
@@ -210,3 +209,4 @@ if bins_check == 0:  # no
     result = find_means(bins_list, level, bin_mean, bin_length)
     net_mean = result[0]
     avg_length = result[1]
+    
