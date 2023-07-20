@@ -560,10 +560,11 @@ for file in files:
             ur2 = input("how would you like to search? ")
             if ur2 == "index":
                 ur3 = input("what index would you like to go to? ")
-                location = rf"{filesPath}\{files[int(ur3)].split('.')[0]}.xlsx"
-                abf = rf"{filesPath}\{files[int(ur3)]}"
-                set_level(abf)
-                file = files[int(ur3)]
+                if files[int(ur3)].endswith(".abf"):
+                    location = rf"{filesPath}\{files[int(ur3)].split('.')[0]}.xlsx"
+                    abf = rf"{filesPath}\{files[int(ur3)]}"
+                    set_level(abf)
+                    file = files[int(ur3)]
             elif ur2 == "fn":
                 ur3 = input("what file would you like to go to? (year, month, day, file num )")
                 location = rf"{filesPath}\{ur3}.xlsx"
