@@ -15,23 +15,6 @@ from Ideal_trace_graph_formatting_version2 import abf_make_a_graph
 
 from low_pass_filter_abf_version1 import low_pass
 
-# from Create_ideal_trace_abf_set_levels_version2 import (
-#     voltage,
-#     duration,
-#     abf,
-#     window_width,
-#     yes,
-#     no,
-#     level,
-#     bin_mean,
-#     bin_index,
-#     bin_length,
-#     filtered_sweepY,
-#     net_mean,
-#     bins_list,
-#     time_step, 
-#     cutoff,
-# )
 from ideal_trace_same_bin_version2 import same_bin
 from ideal_trace_combine_repeates_version2 import combine_repeates
 from ideal_trace_calculate_mean_version2 import find_means
@@ -40,7 +23,7 @@ from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 
 #Global varables
 #set the filter level
-cutoff = 500 
+cutoff = 500
 bins_list = [90, 200, 300]
 voltage = 100
 
@@ -310,58 +293,6 @@ section_start = []
 section_stop = []
 
 
-# move_forward = input("Do you want to remove data? ")
-# while move_forward == "yes":
-#     spike_start.append(int(input("Enter starting value: ")))
-#     spike_stop.append(int(input("Enter ending value: ")))
-#     move_forward = input("Do you want to remove data? ")
-
-#create a histogram with the delted data 
-# histogram(spike_start,spike_stop, location, cutoff)
-# for file in files:
-#     print(file)
-#     location = rf"{filesPath}\{file}.xlsx"
-#     while True:
-#         userResponse =input("What would you like to do?")
-#         if userResponse == "done":
-#             break
-#         if userResponse == "dr":
-#             while True:
-#                 ur2 = input("what kind of spike is this: ")
-#                 if ur2 == "done":
-#                     break
-#                 if ur2 == "ns":
-#                     neg_spike_start.append(int(input("Enter Starting Value: ")))
-#                     neg_spike_stop.append(int(input("Enter ending value: ")))
-#                 elif ur2 == "fp":
-#                     false_pos_start.append(int(input("Enter Starting Value: ")))
-#                     section_start.append(int(input("Enter Section start: ")))
-#                     section_stop.append(int(input("Enter Section End: ")))
-#                 elif ur2 == "ls":
-#                     spike_start.append(int(input("Enter Starting Value: ")))
-#                     spike_stop.append(int(input("Enter Ending Value: ")))
-#                     large_spike()
-            
-#         if userResponse == "graph":
-#             histogram(spike_start,spike_stop, location, cutoff)
-#             ideal_Y= make_ideal_Y(bin_length, net_mean, level)
-#             abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
-
-#         if userResponse == "file":
-#             ur2 = input("how would you like to search? ")
-#             if ur2 == "index":
-#                 ur3 = input("what index would you like to go to? ")
-#                 location = rf"{filesPath}\{files[int(ur3)].split('.')[0]}.xlsx"
-#             elif ur2 == "fn":
-#                 ur3 = input("what file would you like to go to? (year, month, day, file num )")
-#                 location = rf"{filesPath}\{ur3}.xlsx"
-
-
-
-
-
-
-
 
 
 
@@ -572,7 +503,6 @@ for file in files:
                 set_level(abf)
                 file = ur3 + ".abf"
 
-
         # removing false events creates more instances where several "events" in a row are the same event, at the same level, this calls the routine to combine those
     result = combine_repeates(bin_mean, bin_length, bin_index, level)
     # the rountine returns a list of results, the bin_mean, bin_length, bin_index, and level lists
@@ -606,10 +536,6 @@ for file in files:
 
     # print(level)
 
-
-    # ideal_Y = make_ideal_Y(bin_length, net_mean, level)
-
-    # abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins_list)
 
     # rest of code is formatting for the excel files
 
