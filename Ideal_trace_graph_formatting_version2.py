@@ -38,7 +38,7 @@ def abf_make_a_graph(window_width, ideal_Y, abf, filtered_sweepY, duration, bins
         
     #plt.plot(abf.sweepX, abf.sweepY, 'b', linewidth= 0.5)
     plt.plot(abf.sweepX, filtered_sweepY, 'k', linewidth= 0.75)
-    plt.plot(abf.sweepX, ideal_Y, 'r', linewidth=1.25)
+    # plt.plot(abf.sweepX, ideal_Y, 'r', linewidth=1.25)
     plt.axis([0, max(abf.sweepX), min(ideal_Y)-1, top_Yvalue])
     #scrollbar
     plt.axis([0, window_width, min(ideal_Y)-1, top_Yvalue])
