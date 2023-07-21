@@ -5,7 +5,7 @@ import pyabf
 from statistics import mean, stdev
 import pandas as pd
 import os
-# pip install XlsxWriter
+# # pip install XlsxWriter
 import xlsxwriter
 
 # python -m pip install scipy
@@ -455,9 +455,11 @@ def false_positives():
 for file in files:
     if(file.endswith(".xlsx")):
        continue
-    location = rf"{filesPath}\{file}.xlsx"
+    location = rf"{filesPath}\{file.split('.')[0]}.xlsx"
     abf = rf"{filesPath}\{file}"
     set_level(abf)
+    # spike_start.clear()
+    # spike_stop.clear()
     while True:
         print(file)
         userResponse =input("What would you like to do?")
@@ -920,8 +922,8 @@ for file in files:
     with pd.ExcelWriter(location, engine="xlsxwriter") as writer:
         df1.to_excel(writer, sheet_name="data", index=False)
         df2.to_excel(writer, sheet_name="avg", index=False)
-        #       df4.to_excel(writer, sheet_name= 'single event', index = False)
-        #       df5.to_excel(writer, sheet_name= 'single event avg', index = False)
+        # df4.to_excel(writer, sheet_name= 'single event', index = False)
+        # df5.to_excel(writer, sheet_name= 'single event avg', index = False)
         df3.to_excel(writer, sheet_name="bins", index=False)
 
         df6.to_excel(writer, sheet_name="Level_1 times", index=False)
