@@ -7,7 +7,9 @@ import pandas as pd
 import os
 # # pip install XlsxWriter
 import xlsxwriter
-
+import glob
+# pip install glob2
+#pip install openpyxl
 # python -m pip install scipy
 from scipy.stats import sem
 
@@ -23,12 +25,12 @@ from ideal_trace_make_ideal_Y_list_version2 import make_ideal_Y
 
 #Global varables
 #set the filter level
-cutoff = 500
+cutoff = 100
 bins_list = [90, 200, 300]
 
 voltage = 123.1
-tempature = 20
-lipid = ["DOPE"]
+tempature = 26
+lipid = ["DOPC"]
 pA_levels = [0, #closed 
              10, #closed
              10, #level 0
@@ -247,8 +249,8 @@ def histogram(start,stop, location, cutoff):
     plt.hist(filtered_sweepY,bins=1000, range=(-10,600))
     plt.ylim(0, 1000)
     plt.title("file: " + location.split("\\")[-1].split(".")[0])
-    plt.xlabel("Occurances with " + str(cutoff) + "Hz Filtering")
-    plt.ylabel("pA")
+    plt.xlabel("pA")
+    plt.ylabel("Occurances with " + str(cutoff) + "Hz Filtering")
     plt.show()
 
 
@@ -296,8 +298,12 @@ filesPath = os.getcwd()
 
 
 for file in files:
-    if(file.endswith(".xlsx")):
+    if(not file.endswith(".abf")):
        continue
+    u = input("skip?")
+    print(file)
+    if u == "yes":
+        continue
     location = rf"{filesPath}\{file.split('.')[0]}.xlsx"
     abf_file_number = file.split('.')[0]
     abf = rf"{filesPath}\{file}"
@@ -306,6 +312,7 @@ for file in files:
     spike_stop.clear()
     while True:
         print(file)
+        print(len(abf.sweepY))
         userResponse =input("What would you like to do?")
         if userResponse == "done":
             break
@@ -314,8 +321,8 @@ for file in files:
                 ur2 = input("Want to remove noise? ")
                 if ur2 == "done":
                     break
-                spike_start.append(int(input("Enter Starting Value: ")))
-                spike_stop.append(int(input("Enter Ending Value: ")))
+                spike_start.append(float(input("Enter Starting Value: ")))
+                spike_stop.append(float(input("Enter Ending Value: ")))
                 large_spike()
             
         if userResponse == "graph":
@@ -340,58 +347,60 @@ for file in files:
                 file = ur3 + ".abf"
 
         if userResponse == "data":
-            closed_start = input("The lower value for closed: ")
+            closed_start = float(input("The lower value for closed: "))
             pA_levels[0] = closed_start
-            closed_end = input("The upper value for closed: ")
+            closed_end = float(input("The upper value for closed: "))
             pA_levels[1] = closed_end
 
 
-            L0_start = input("The lower value for level 0: ")
+            L0_start = float(input("The lower value for level 0: "))
             pA_levels[2] = L0_start
-            L0_end = input("The upper value for level 0: ")
+            L0_end = float(input("The upper value for level 0: "))
             pA_levels[3] = L0_end
 
 
-            L1_start = input("The lower value for level 1: ")
+            L1_start = float(input("The lower value for level 1: "))
             pA_levels[4] = L1_start
-            L1_end = input("The upper value for level 1: ")
+            L1_end = float(input("The upper value for level 1: "))
             pA_levels[5] = L1_end
 
 
-            L2_start = input("The lower value for level 2: ")
+            L2_start = float(input("The lower value for level 2: "))
             pA_levels[6] = L2_start
-            L2_end = input("The upper value for level 2: ")
+            L2_end = float(input("The upper value for level 2: "))
             pA_levels[7] = L2_end
 
 
-            L3_start = input("The lower value for level 3: ")
+            L3_start = float(input("The lower value for level 3: "))
             pA_levels[8] = L3_start
-            L3_end = input("The upper value for level 3: ")
+            L3_end = float(input("The upper value for level 3: "))
             pA_levels[9] = L3_end
 
 
-            L4_start = input("The lower value for level 4: ")
+            L4_start = float(input("The lower value for level 4: "))
             pA_levels[10] = L4_start
-            L4_end = input("The upper value for level 4: ")
+            L4_end = float(input("The upper value for level 4: "))
             pA_levels[11] = L4_end
 
 
-            R2_start = input("The lower value for reduced level 2: ")
+            R2_start = float(input("The lower value for reduced level 2: "))
             pA_levels[12] = R2_start
-            R2_end = input("The upper value for reduced level 2: ")
+            R2_end = float(input("The upper value for reduced level 2: "))
             pA_levels[13] = R2_end
 
 
-            R3_start = input("The lower value for reduced level 3: ")
+            R3_start = float(input("The lower value for reduced level 3: "))
             pA_levels[14] = R3_start
-            R3_end = input("The upper value for reduced level 3: ")
+            R3_end = float(input("The upper value for reduced level 3: "))
             pA_levels[15] = R3_end
 
 
-            R4_start = input("The lower value for reduced level 4: ")
+            R4_start = float(input("The lower value for reduced level 4: "))
             pA_levels[16] = R4_start
-            R4_end = input("The upper value for reduced level 4: ")
+            R4_end = float(input("The upper value for reduced level 4: "))
             pA_levels[17] = R4_end
+
+
 
     ##############################################################################
     #############################################################################
@@ -437,7 +446,7 @@ for file in files:
 
     #sums up the number of times that each value occurs in the file 
     for y in abf.sweepY:
-        if y >= pA_levels[0] and y <= pA_levels[1] :
+        if y >= pA_levels[0] and y < pA_levels[1] :
             time_closed+=1 
 
         if y >= pA_levels[2] and y <= pA_levels[3] :
@@ -464,15 +473,15 @@ for file in files:
         if y >= pA_levels[16] and y <= pA_levels[17] :
             time_level_r_4+=1 
             
-    time_closed /= 10 
-    time_level0 /= 10 
-    time_level1 /= 10 
-    time_level2 /= 10 
-    time_level3 /= 10 
-    time_level4 /= 10 
-    time_level_r_2 /= 10 
-    time_level_r_3 /= 10 
-    time_level_r_4 /= 10 
+    time_closed /= 20 
+    time_level0 /= 20 
+    time_level1 /= 20 
+    time_level2 /= 20 
+    time_level3 /= 20 
+    time_level4 /= 20 
+    time_level_r_2 /= 20 
+    time_level_r_3 /= 20 
+    time_level_r_4 /= 20 
 
 
     # all the variables that will be displayed in the excel files
@@ -534,3 +543,9 @@ for file in files:
  
 
     print("done")
+
+#goes through director currently in and compiles all excel files together
+# path = rf"{os.getcwd()}\\"
+# filenames = [file for file in os.listdir(path) if file.endswith('.xlsx')]
+
+# df = pd.concat([pd.read_excel(path + file) for file in filenames], ignore_index=True)
