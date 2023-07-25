@@ -544,7 +544,7 @@ for file in files:
 
     print("done")
 
-#goes through director currently in and compiles all excel files together
+#goes through director currently in and compiles all excel files in user directory together
 # path = rf"{os.getcwd()}\\"
 # filenames = [file for file in os.listdir(path) if file.endswith('.xlsx')]
 
