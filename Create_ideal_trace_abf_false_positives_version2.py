@@ -545,7 +545,8 @@ for file in files:
     print("done")
 
 #goes through director currently in and compiles all excel files in user directory together
-# path = rf"{os.getcwd()}\\"
-# filenames = [file for file in os.listdir(path) if file.endswith('.xlsx')]
+path = rf"{os.getcwd()}\\"
+filenames = [file for file in os.listdir(path) if file.endswith('.xlsx')]
 
-# df = pd.concat([pd.read_excel(path + file) for file in filenames], ignore_index=True)
+df = pd.concat([pd.read_excel(path + file) for file in filenames], ignore_index=True,)
+df.to_excel("output.xlsx")
