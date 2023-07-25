@@ -60,7 +60,7 @@ pA_levels = [0, #closed
 
 
 def set_level(abf_file):
-# function to determin if two values are in the same bin
+# function to determine if two values are in the same bin
     # window_width= 59.999
     global window_width
     window_width = 10
