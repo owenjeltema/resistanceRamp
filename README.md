@@ -1,17 +1,32 @@
 # resistanceRamp
+@author: grabills
 
-The function of this code is to analysize the CA1 step resistance measurements, without using the PClamp software suite.
+# Guide to Analyzing CA1 Step Resistance Measurements
 
-There is some functionality that wasn't added but could become nessessary depending on use. The low_pass and filter methods support filtering out annomalous datapoints via guassian transformations, however they currently delete the voltages that the methods remove. The base functionality is nessessary, but means whatever list is given to the functions will not nessessarly have it's incices match the time list. This creates issues for the n_reg function, which performs much of the analysis on the abf.sweep(x,y) files. X corresponds to voltage, and Y current. 
+This guide will help you understand how to analyze CA1 step resistance measurements without using the PClamp software suite. This process involves simulating the behavior of an LCR circuit, which PClamp cannot measure directly through the voltage step procedure. The analysis uses a program called `ResistanceRamp.py`.
 
-Calculate_standard_error: The calculate_standard_error, calculates standard error for a given list.
+## Overview
 
-low_pass: The low_pass function applies a gaussian filtering to a abf.sweep(x,y) which correspond to the datasets for voltage and current. This in tandem with the filter function can apply and fit a filter to a dataset to reduce noise, corresponding to the sigma.
+Our experimental setup involves applying a voltage through an electrode in a salty water solution, which is similar to current flowing through a wire. A capacitor, representing a bilayer, is placed between the positive and negative terminals. As we shift the voltage across it, the capacitor causes an exponential decay since the voltage across a capacitor cannot change instantly. This is why we use the Resistance Ramp procedure.
 
-Filter: The filter function removes points dictated by the (Nan) from the low_pass function. This currently does not go back and edit other nessessary dataset along side given, resulting in graphing challenges for N_reg.
+## Setup Instructions
 
-n_reg: The n_reg function graphs the given voltage and current, with a given exponential regression. The function also takes the step averages at the end of each specified data section and allows users to remove wanted points. The function also has a r-squared calculation, which provides an rough estimate for the data's fit.
+1. **Organize Data**: Place all the data you want to analyze in a directory that you can access from your terminal.
+2. **Compile the Program**: Navigate to that directory in your terminal and compile the `ResistanceRamp.py` script. This tells the program to analyze the data within the specified path.
 
-AverageI: The averageI function segments the abf.sweep(x,y) into segments which are averaged by a timeshift--which is the amount of time at the step the user wants to sample. For 2023 purposes this was 2 seconds due to the higher accuracy, but lower can also be acceptable. The time array is in milli seconds, and doesn't include the upward step, since it would intruduce high outliers.
+## Key Functions and Their Roles
 
-Note on use: the OS integration allows for ResistanceRampTest to work based on the direcory that is calling it. This means it should be called from the directory that has the files that need to be analysed. The function will then itterate through all files in that directory and the user can choose where to place the results as wanted.
+- **`calculate_standard_error`**: This function calculates the standard error for a given list of data points.
+
+- **`low_pass`**: This function applies a Gaussian filter to the dataset (`abf.sweep(x,y)`) to reduce noise. Here, `x` corresponds to voltage and `y` to current. The Gaussian filter smooths the data based on a parameter called sigma.
+
+- **`filter`**: This function removes data points marked as (NaN) by the `low_pass` function. Note that this currently does not adjust other datasets accordingly, which can cause issues for the `n_reg` function.
+
+- **`n_reg`**: This function graphs the voltage and current data and performs exponential regression. It calculates the average values at the end of each data section and allows users to remove unwanted points. It also provides an R-squared value to estimate the data fit.
+
+- **`averageI`**: This function segments the `abf.sweep(x,y)` data into sections, averaging the values over a specified time interval (2 seconds for 2023 purposes, but this can be adjusted). The time array is in milliseconds and does not include the initial upward step to avoid introducing high outliers.
+
+## Additional Notes
+
+- **OS Integration**: The program is designed to work based on the directory from which it is called. It iterates through all files in the specified directory, and you can choose where to save the results.
+- **Limitations**: Some functionality, such as adjusting datasets alongside filtering, is not fully implemented. This can create challenges, particularly for graphing with the `n_reg` function.
