@@ -1,4 +1,4 @@
-# resistanceRamp
+# ResistanceRamp
 @author: grabills
 
 # Guide to Analyzing CA1 Step Resistance Measurements
