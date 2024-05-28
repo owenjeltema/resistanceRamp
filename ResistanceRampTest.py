@@ -266,14 +266,14 @@ for file in fileDir:
             )
         if tempBool:
             userinput = input('Select data to use:\nUse first figure: "1"\nUse second figure: "2"\nUse neither figure: "pass"')
-            if userinput == "1":
-                CSVdataList.append(tempCSVdataList[1])
-                CSVdataList[len(CSVdataList)-1][0] = fileNumber
-            elif userinput == "2":
+            if userinput == "2":
                 CSVdataList.append(tempCSVdataList[3])
                 CSVdataList[len(CSVdataList)-1][0] = fileNumber
             elif userinput == "pass":
                 pass
+            else:
+                CSVdataList.append(tempCSVdataList[1])
+                CSVdataList[len(CSVdataList)-1][0] = fileNumber
             tempCSVdataList = []
 
 dataAsCSV = ''
