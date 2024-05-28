@@ -192,10 +192,13 @@ def fileoperation(voltList, stepList, n, file):
     if remove != "no":
         delete = remove.split()
         for x in delete:
-            a = int(x)
-            index = voltageList.index(a)
-            voltageList.pop(index)
-            stepCurrent.pop(index)
+            try:
+                a = int(x)
+                index = voltageList.index(a)
+                voltageList.pop(index)
+                stepCurrent.pop(index)
+            except:
+                pass
     print("\n", "Post data regression n = ", n, file)
     n_reg(voltageList, stepCurrent, n, 2, file), print(
         file, "\n", "######################################", "\n"
@@ -265,15 +268,20 @@ for file in fileDir:
                 fileDir[fileDir.index(file) + int(userinput)],
             )
         if tempBool:
-            userinput = input('Select data to use:\nUse first figure: "1"\nUse second figure: "2"\nUse neither figure: "pass"')
-            if userinput == "2":
-                CSVdataList.append(tempCSVdataList[3])
-                CSVdataList[len(CSVdataList)-1][0] = fileNumber
-            elif userinput == "pass":
-                pass
-            else:
-                CSVdataList.append(tempCSVdataList[1])
-                CSVdataList[len(CSVdataList)-1][0] = fileNumber
+            while tempBool:
+                userinput = input('Select data to use:\nUse first figure: "1"\nUse second figure: "2"\nUse neither figure: "pass"')
+                if userinput == "1":
+                    CSVdataList.append(tempCSVdataList[1])
+                    CSVdataList[len(CSVdataList)-1][0] = fileNumber
+                    tempBool = False
+                elif userinput == "2":
+                    CSVdataList.append(tempCSVdataList[3])
+                    CSVdataList[len(CSVdataList)-1][0] = fileNumber
+                    tempBool = False
+                elif userinput == "pass":
+                    tempBool = False
+                else:
+                    pass
             tempCSVdataList = []
 
 dataAsCSV = ''
