@@ -278,8 +278,8 @@ for file in fileDir:
 
 dataAsCSV = ''
 for i in CSVdataList: #gives all data selected in a CSV-style file which can be opened in excel
-    dataAsCSV = dataAsCSV + i[0] + ', ' + '"' + str(i[1]) + '"' + ', ' + '"' + str(i[2]) + '"' + ', ' + '"' + str(i[3]) + '"' + ', ' + '"' + str(i[4]) + '"' + ';'
-dataAsCSV = dataAsCSV[:-1]
+    dataAsCSV = dataAsCSV + i[0] + ', ' + str(i[1]) + ', ' + str(i[2]) + ', ' + str(i[3]) + ', ' + str(i[4]) + ';'
+dataAsCSV = dataAsCSV[:-1] #remove final semicolon
 print('')
 print(dataAsCSV)
 print('')
