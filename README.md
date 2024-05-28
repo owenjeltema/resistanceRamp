@@ -42,7 +42,9 @@ go to specific index: "number"
 ## Additional Notes
 
 - **OS Integration**: The program is designed to work based on the directory from which it is called. It iterates through all files in the specified directory, and you can choose where to save the results.
+- **Excel**: The excel integration works very similar to `Create_ideal_trace_abf_false_positives_version2.py`. A dataframe is created, which allows for all of the post processed data to be stored and exported.
 - **Limitations**: Some functionality, such as adjusting datasets alongside filtering, is not fully implemented. This can create challenges, particularly for graphing with the `n_reg` function.
+
 
 
 

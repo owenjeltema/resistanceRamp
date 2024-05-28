@@ -10,7 +10,13 @@ import math
 import copy
 import pandas as pd
 
+# need to install
+# pip install xlrd
+# pip install pyabf
+# pip install pandas
+# pip install glob
 
+# defines lists for excel exporting
 abf_file_list = []
 g_lin = []
 bg_lin = []
@@ -21,10 +27,6 @@ bg_quad = []
 r_quad = []
 eg_quad = []
 egb_lin = []
-# need to install
-# pip install xlrd
-# pip install pyabf
-# pip install pandas
 
 
 # Filters the data and returns and list with the nan removed
@@ -108,11 +110,10 @@ def n_reg(volt, cur, n, range, abf_num):
     if n == 2:
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
-
+        # adds post processed data to dataframe
         g_quad.append(model[1]), r_quad.append(pow(model[1], -1)), bg_quad.append(
             Eq8_11(voltage, current)
         ), eg_quad.append(math.sqrt(cov[1][1]))
-
         # find the slope at zero and print wanted data
         print("condutance nS", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[1][1]))
@@ -127,12 +128,11 @@ def n_reg(volt, cur, n, range, abf_num):
                 current.pop(index)
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
-        # find the slope at zero and print wanted data
-
+        # adds post processed data to dataframe
         g_lin.append(model[1]), r_lin.append(pow(model[1], -1)), bg_lin.append(
             Eq8_11(voltage, current)
         ), eg_lin.append(math.sqrt(cov[0][0])), egb_lin.append(Eq8_17(voltage, current))
-
+        # find the slope at zero and print wanted data
         print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[0][0]))  # is this correct?
         # need a linear regression
@@ -266,6 +266,7 @@ while i < len(fileDir):
             continue  # Skip the increment to rerun the previous file
 
         elif userinput == "cont":
+            # makes the abf file numbers work for dataframe
             abf_file_list.append(abf_file_number)
             abf_file_list.append(abf_file_number)
             fileoperation(voltageList, stepCurrent, 1, file)
@@ -279,6 +280,8 @@ while i < len(fileDir):
             continue  # Skip the increment to jump to the specified index
     i += 1  # Move to the next file
 
+
+# data frame which holds relevant information, then exports using glob to an excel file.
 abf_data = {
     "ABF file number": abf_file_list,
     "Condutance Linear": g_lin,
@@ -306,6 +309,8 @@ df1 = pd.DataFrame(
         "Error in Conductance Quadratic",
     ],
 )
+
+# uses current working directory
 filesPath = os.getcwd()
 with pd.ExcelWriter(rf"{filesPath}.xlsx", engine="xlsxwriter") as writer:
     df1.to_excel(writer, sheet_name="data", index=False)
