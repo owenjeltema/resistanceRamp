@@ -8,8 +8,19 @@ from statistics import mean
 import os
 import math
 import copy
+import pandas as pd
 
 
+abf_file_list = []
+g_lin = []
+bg_lin = []
+r_lin = []
+eg_lin = []
+g_quad = []
+bg_quad = []
+r_quad = []
+eg_quad = []
+egb_lin = []
 # need to install
 # pip install xlrd
 # pip install pyabf
@@ -97,6 +108,11 @@ def n_reg(volt, cur, n, range, abf_num):
     if n == 2:
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
+
+        g_quad.append(model[1]), r_quad.append(pow(model[1], -1)), bg_quad.append(
+            Eq8_11(voltage, current)
+        ), eg_quad.append(math.sqrt(cov[1][1]))
+
         # find the slope at zero and print wanted data
         print("condutance nS", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[1][1]))
@@ -112,12 +128,17 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
+
+        g_lin.append(model[1]), r_lin.append(pow(model[1], -1)), bg_lin.append(
+            Eq8_11(voltage, current)
+        ), eg_lin.append(math.sqrt(cov[0][0])), egb_lin.append(Eq8_17(voltage, current))
+
         print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
         print("error in conductance: ", math.sqrt(cov[0][0]))  # is this correct?
         # need a linear regression
         print("From the book Condutance ns :", Eq8_11(voltage, current))
         print(
-            "error in conductance: ",
+            "error in book conductance: ",
             Eq8_17(voltage, current),
         )
 
@@ -144,7 +165,6 @@ def n_reg(volt, cur, n, range, abf_num):
     ax2.tick_params(axis="x", colors="C2")
     polyline = np.linspace(1, 150, 50)
     plt.plot(polyline, model(polyline))
-
     plt.title("resistance Data File: " + abf_num)
 
     # find the slope at zero and print wanted data
@@ -207,6 +227,7 @@ fileDir = os.listdir()
 i = 0
 while i < len(fileDir):
     file = fileDir[i]
+    tempBool = False
     # Check whether file is in abf format or not
     voltageList = [
         0,
@@ -227,7 +248,8 @@ while i < len(fileDir):
         150,
     ]
     if file.endswith(".abf"):
-        # call read abf file
+        abf_file_number = file.split(".")[0][-3:]
+        # abf_file_list.append(abf_file_number)
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
         # larger scale (better for higher temps)
@@ -244,9 +266,10 @@ while i < len(fileDir):
             continue  # Skip the increment to rerun the previous file
 
         elif userinput == "cont":
+            abf_file_list.append(abf_file_number)
+            abf_file_list.append(abf_file_number)
             fileoperation(voltageList, stepCurrent, 1, file)
             fileoperation(voltageList, stepCurrent, 2, file)
-
         elif userinput.isnumeric():
             new_index = i + int(userinput)
             if 0 <= new_index < len(fileDir):
@@ -254,7 +277,40 @@ while i < len(fileDir):
             else:
                 print("Index out of range. Continuing with the current file.")
             continue  # Skip the increment to jump to the specified index
-        i += 1  # Move to the next file
+    i += 1  # Move to the next file
+
+abf_data = {
+    "ABF file number": abf_file_list,
+    "Condutance Linear": g_lin,
+    "Book Conductance Linear": bg_lin,
+    "Resistance Linear": r_lin,
+    "Error in Conductance Linear": eg_lin,
+    "Condutance Quadratic": g_quad,
+    "Book Conductance Quadratic": bg_quad,
+    "Book Conductance Error Linear": egb_lin,
+    "Resistance Quadratic": r_quad,
+    "Error in Conductance Quadratic": eg_quad,
+}
+
+df1 = pd.DataFrame(
+    abf_data,
+    columns=[
+        "ABF file number",
+        "Condutance Linear",
+        "Book Conductance Linear",
+        "Resistance Linear",
+        "Error in Conductance Linear",
+        "Condutance Quadratic",
+        "Book Conductance Quadratic",
+        "Resistance Quadratic",
+        "Error in Conductance Quadratic",
+    ],
+)
+filesPath = os.getcwd()
+with pd.ExcelWriter(rf"{filesPath}.xlsx", engine="xlsxwriter") as writer:
+    df1.to_excel(writer, sheet_name="data", index=False)
+
+print("done")
 
 
 # plot the original data
@@ -266,6 +322,5 @@ abf.setSweep(0)  # reload sweep with new filter
 label = "sigma: %.02f" % (10)
 plt.plot(abf.sweepX, abf.sweepY, alpha=.8, label=label) 
 """
-
 
 # Create a graph of the pre and post filter data
