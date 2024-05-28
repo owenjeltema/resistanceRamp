@@ -14,6 +14,19 @@ Our experimental setup involves applying a voltage through an electrode in a sal
 1. **Organize Data**: Place all the data you want to analyze in a directory that you can access from your terminal.
 2. **Compile the Program**: Navigate to that directory in your terminal and compile the `ResistanceRamp.py` script. This tells the program to analyze the data within the specified path.
 
+## How to Use
+The basic user interface is a prompt with 3 options:
+```python
+rerun a file: "rerun"
+continue to current file: "cont"
+press enter to quickly move through files
+go to specific index: "number"
+```
+- `rerun`: shifts index back so previous file can be analyzed again.
+- `cont`: will begin analysis on file.
+- `number`: will go to a specific file number and give index base 0.
+- `enter`: pressing enter will quickly iterate through files and resume `cont` from a new starting position.
+
 ## Key Functions and Their Roles
 
 - **`calculate_standard_error`**: This function calculates the standard error for a given list of data points.
