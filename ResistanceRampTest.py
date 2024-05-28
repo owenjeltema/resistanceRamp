@@ -204,7 +204,9 @@ def fileoperation(voltList, stepList, n, file):
 
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
 fileDir = os.listdir()
-for file in fileDir:
+i = 0
+while i < len(fileDir):
+    file = fileDir[i]
     # Check whether file is in abf format or not
     voltageList = [
         0,
@@ -235,25 +237,24 @@ for file in fileDir:
             'rerun a file: "rerun" \ncontinue to current file: "cont"  \npress enter to quickly move through files  \ngo to specific index: "number"  \n'
         )
         if userinput == "rerun":
-            fileoperation(voltageList, stepCurrent, 1, fileDir[fileDir.index(file) - 1])
-            fileoperation(voltageList, stepCurrent, 2, fileDir[fileDir.index(file) - 1])
+            if i > 0:
+                i -= 1
+            else:
+                print("Already at the first file. Can't rerun previous file.")
+            continue  # Skip the increment to rerun the previous file
 
         elif userinput == "cont":
             fileoperation(voltageList, stepCurrent, 1, file)
             fileoperation(voltageList, stepCurrent, 2, file)
-        elif userinput.isnumeric() == True:
-            fileoperation(
-                voltageList,
-                stepCurrent,
-                1,
-                fileDir[fileDir.index(file) + int(userinput)],
-            )
-            fileoperation(
-                voltageList,
-                stepCurrent,
-                2,
-                fileDir[fileDir.index(file) + int(userinput)],
-            )
+
+        elif userinput.isnumeric():
+            new_index = i + int(userinput)
+            if 0 <= new_index < len(fileDir):
+                i = new_index
+            else:
+                print("Index out of range. Continuing with the current file.")
+            continue  # Skip the increment to jump to the specified index
+        i += 1  # Move to the next file
 
 
 # plot the original data
