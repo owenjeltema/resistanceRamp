@@ -9,6 +9,8 @@ import os
 import math
 import copy
 
+CSVdataList = [] #holds all data for use in excel -> [File number, Slope R Gohm, Conductance ns, conductance book, conductance error calc]
+tempCSVdataList = [] #temporary version of CSVdataList
 
 # include that other formula
 
@@ -91,8 +93,10 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS", model[1], "\n", "resistance", pow(model[1], -1))
-        print("error in conductance: ", math.sqrt(cov[1][1]))
+        temp = ['3 nums',pow(model[1], -1),model[1],Eq8_11(voltage,current),math.sqrt(cov[1][1])]
+        tempCSVdataList.append(temp) #change first to file num
+        print("condutance nS", temp[2], "\n", "resistance", temp[1])
+        print("error in conductance: ", temp[4])
 
     if n == 1:
         linearRange = [90, 100, 110, 120, 130, 140, 150]
@@ -105,10 +109,12 @@ def n_reg(volt, cur, n, range, abf_num):
         p, cov = np.polyfit(voltage, current, n, cov=True)
         model = np.poly1d(p)
         # find the slope at zero and print wanted data
-        print("condutance nS at ", model[1], "\n", "resistance", pow(model[1], -1))
-        print("error in conductance: ", math.sqrt(cov[0][0]))  # is this correct?
+        temp = ['3 nums',pow(model[1], -1),model[1],Eq8_11(voltage,current),math.sqrt(cov[0][0])]
+        tempCSVdataList.append(temp) #change first to file num
+        print("condutance nS at ", temp[2], "\n", "resistance", temp[1])
+        print("error in conductance: ", temp[4])  # is this correct?
         # need a linear regression
-        print("From the book Condutance ns :", Eq8_11(voltage,current))
+        print("From the book Condutance ns :", temp[3])
         print(
             "error in conductance: ", Eq8_17(voltage,current),
         )
@@ -223,19 +229,29 @@ for file in fileDir:
         abf = pyabf.ABF(file)
         stepCurrent = averageI(abf.sweepY, 100)
         # larger scale (better for higher temps)
+        fileNumber = file[:-4]
+        fileNumber = fileNumber[::-1]
+        temp = len(fileNumber) - 3
+        fileNumber = fileNumber[:-temp]
+        fileNumber = fileNumber[::-1]
+        print(fileNumber)
 
         print("@@@@@@@@@@@@@@@@@@", file, "@@@@@@@@@@@@@@@@@@\n")
         userinput = input(
             'rerun a file: "rerun" \ncontinue to current file: "cont"  \npress enter to quickly move through files  \ngo to specific index: "number"  \n'
         )
+        tempBool = False
         if userinput == "rerun":
             fileoperation(voltageList, stepCurrent, 1, fileDir[fileDir.index(file) - 1])
             fileoperation(voltageList, stepCurrent, 2, fileDir[fileDir.index(file) - 1])
+            tempBool = True
 
         elif userinput == "cont":
             fileoperation(voltageList, stepCurrent, 1, file)
             fileoperation(voltageList, stepCurrent, 2, file)
+            tempBool = True
         elif userinput.isnumeric() == True:
+            tempBool = True
             fileoperation(
                 voltageList,
                 stepCurrent,
@@ -248,7 +264,27 @@ for file in fileDir:
                 2,
                 fileDir[fileDir.index(file) + int(userinput)],
             )
+        if tempBool:
+            userinput = input('Select data to use:\nUse first figure: "1"\nUse second figure: "2"\nUse neither figure: "pass"')
+            if userinput == "1":
+                CSVdataList.append(tempCSVdataList[1])
+                CSVdataList[len(CSVdataList)-1][0] = fileNumber
+            elif userinput == "2":
+                CSVdataList.append(tempCSVdataList[3])
+                CSVdataList[len(CSVdataList)-1][0] = fileNumber
+            elif userinput == "pass":
+                pass
+            tempCSVdataList = []
 
+dataAsCSV = ''
+for i in CSVdataList: #gives all data selected in a CSV-style file which can be opened in excel
+    dataAsCSV = dataAsCSV + i[0] + ', ' + '"' + str(i[1]) + '"' + ', ' + '"' + str(i[2]) + '"' + ', ' + '"' + str(i[3]) + '"' + ', ' + '"' + str(i[4]) + '"' + ';'
+dataAsCSV = dataAsCSV[:-1]
+print('')
+print(dataAsCSV)
+print('')
+print('In excel use "=TEXTSPLIT(##$$,",",";")" to seperate data, with ##$$ being where data string is located (e.g. A1).')
+print('')
 
 
 # plot the original data
