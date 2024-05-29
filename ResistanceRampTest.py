@@ -318,6 +318,8 @@ df1 = pd.DataFrame(
     ],
 )
 
+df1 = df1.groupby("ABF file number", as_index=False).last()
+
 # uses current working directory
 filesPath = os.getcwd()
 with pd.ExcelWriter(rf"{filesPath}.xlsx", engine="xlsxwriter") as writer:
