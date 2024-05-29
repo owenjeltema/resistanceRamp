@@ -283,7 +283,7 @@ while i < len(fileDir):
                 print("Index out of range. Continuing with the current file.")
             continue  # Skip the increment to jump to the specified index
         else:
-            continue
+            pass
     i += 1  # Move to the next file
 
 
