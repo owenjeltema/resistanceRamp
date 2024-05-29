@@ -17,6 +17,7 @@ import pandas as pd
 # pip install glob
 
 # defines lists for excel exporting
+# e = uncertainty, g = conductance, b = book
 abf_file_list = []
 g_lin = []
 bg_lin = []
@@ -278,6 +279,8 @@ while i < len(fileDir):
             else:
                 print("Index out of range. Continuing with the current file.")
             continue  # Skip the increment to jump to the specified index
+        else:
+            continue
     i += 1  # Move to the next file
 
 
