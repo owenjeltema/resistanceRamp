@@ -226,6 +226,8 @@ def fileoperation(voltList, stepList, n, file):
     )
 
 
+# may need to grab info for dataframe around here
+
 # iterate through all files within directory that IDE is currently within. Set path to be wherever dataset is for easy itteration and saving.
 fileDir = os.listdir()
 i = 0
