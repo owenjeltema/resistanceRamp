@@ -213,10 +213,13 @@ def fileoperation(voltList, stepList, n, file):
     if remove != "no":
         delete = remove.split()
         for x in delete:
-            a = int(x)
-            index = voltageList.index(a)
-            voltageList.pop(index)
-            stepCurrent.pop(index)
+            try:
+                a = int(x)
+                index = voltageList.index(a)
+                voltageList.pop(index)
+                stepCurrent.pop(index)
+            except:
+                print("Improper removal")
     print("\n", "Post data regression n = ", n, file)
     n_reg(voltageList, stepCurrent, n, 2, file), print(
         file, "\n", "######################################", "\n"
