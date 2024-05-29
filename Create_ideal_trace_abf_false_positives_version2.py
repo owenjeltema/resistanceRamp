@@ -152,35 +152,21 @@ spike_start = []
 spike_stop = []
 
 
-# runs this code if there is a large noise spike
 def large_spike():
     d = 0
-    e = 0
-    while e < len(spike_start):
-        false_index = 0
-        v = round((spike_start[e] / time_step))
-        while v < round(spike_stop[e] / time_step):
-            c = 0
-            # if the index is equal to any number in the bin_index, that means that there is a change of level there
-            # while it is within the defined noise spike, that change of level is incorrect, and the value in the level list is replaced by -1
-            while c < len(bin_index):
-                if bin_index[c] == v:
-                    false_index = c
-                    level.pop(c)
-                    level.insert(c, -1)
-                    d = d + 1
-                c = c + 1
-            v = v + 1
+    for e in range(len(spike_start)):
+        start_index = round(spike_start[e] / time_step)
+        stop_index = round(spike_stop[e] / time_step)
 
-        # the above process also replaces the level for the stretch of closed current after the spike with -1, when it should remain 0
-        # the following couple lines of code find the last level changed to -1 in the spike and return it to 0, indicating a closed level
-        c = 0
-        while c < len(bin_index) - 1:
+        for v in range(start_index, stop_index):
+            if v in bin_index:
+                false_index = bin_index.index(v)
+                level[false_index] = -1
+                d += 1
+
+        for c in range(len(bin_index) - 1):
             if level[c] == -1 and level[c + 1] != -1:
-                level.pop(c)
-                level.insert(c, 0)
-            c = c + 1
-        e = e + 1
+                level[c] = 0
 
 
 # the location on your computer where you want the file and the name of the file
