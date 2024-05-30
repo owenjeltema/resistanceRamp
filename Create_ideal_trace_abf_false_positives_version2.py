@@ -53,13 +53,9 @@ pA_levels = [
     382,  # level reduced 4
 ]
 
-
 #####################################################################################
 #######################################################################################
 #######################################################################################
-
-
-import numpy as np
 
 
 def set_level(abf_file):
@@ -126,25 +122,47 @@ def set_level(abf_file):
 
 
 def histogram(start, stop, location, cutoff):
-    i = 0
-    while i < len(start):
-        start_index = np.where(abf.sweepX == start[i])[0][0]
-        stop_index = np.where(abf.sweepX == stop[i])[0][0]
-        x = start_index
-        while x <= stop_index:
-            filtered_sweepY[x] = -1
-            x += 1
-        i += 1
+    try:
+        if not (len(start) == len(stop)):
+            raise ValueError("The start and stop lists must be of the same length.")
 
-        # create histogram
-    plt.hist(filtered_sweepY, bins=1000, range=(-10, 600))
-    plt.ylim(0, 1000)
-    # plt.title("file: " + location.split("\\")[-1].split(".")[0])
-    plt.legend(prop={"size": 10})
-    plt.title("DOPE")
-    plt.xlabel("pA")
-    plt.ylabel("Occurances with 1 kHz Filtering")  # + str(cutoff)
-    plt.show()
+        # Ensure start and stop lists are not empty
+        if len(start) == 0 or len(stop) == 0:
+            raise ValueError("Start and stop lists cannot be empty.")
+
+        for i in range(len(start)):
+            try:
+                # Ensure start and stop times are within the range of abf.sweepX
+                if start[i] not in abf.sweepX or stop[i] not in abf.sweepX:
+                    raise ValueError(
+                        f"Start or stop time {start[i]}, {stop[i]} not in abf.sweepX"
+                    )
+
+                start_index = np.where(abf.sweepX == start[i])[0][0]
+                stop_index = np.where(abf.sweepX == stop[i])[0][0]
+
+                # Ensure indices are in the correct order
+                if start_index > stop_index:
+                    raise ValueError(
+                        f"Start index {start_index} is greater than stop index {stop_index}"
+                    )
+
+                # Mark the filtered values within the specified range
+                filtered_sweepY[start_index : stop_index + 1] = -1
+            except ValueError as ve:
+                print(f"Error processing interval {i}: {ve}")
+
+        # Create histogram
+        plt.hist(filtered_sweepY, bins=1000, range=(-10, 600))
+        plt.ylim(0, 1000)
+        plt.title("DOPE")
+        plt.xlabel("pA")
+        plt.ylabel("Occurrences with 1 kHz Filtering")  # + str(cutoff)
+        plt.legend(prop={"size": 10})
+        plt.show()
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 # large spike
@@ -152,21 +170,51 @@ spike_start = []
 spike_stop = []
 
 
-def large_spike():
-    d = 0
-    for e in range(len(spike_start)):
-        start_index = round(spike_start[e] / time_step)
-        stop_index = round(spike_stop[e] / time_step)
+def large_spike(spike_start, spike_stop):
+    global level, filtered_sweepY
 
-        for v in range(start_index, stop_index):
-            if v in bin_index:
-                false_index = bin_index.index(v)
-                level[false_index] = -1
-                d += 1
+    try:
+        if len(spike_start) != len(spike_stop):
+            raise ValueError(
+                "The spike_start and spike_stop arrays must be of the same length."
+            )
 
+        d = 0
+        bin_index_set = set(bin_index)  # Convert bin_index to a set for faster lookup
+
+        # Find nearest indices for spike start and stop values, and update filtered_sweepY
+        for e in range(len(spike_start)):
+            start_value = spike_start[e]
+            start_index = np.abs(abf.sweepX - start_value).argmin()
+            spike_start[e] = abf.sweepX[
+                start_index
+            ]  # Update spike_start with approximate value
+
+            stop_value = spike_stop[e]
+            stop_index = np.abs(abf.sweepX - stop_value).argmin()
+            spike_stop[e] = abf.sweepX[
+                stop_index
+            ]  # Update spike_stop with approximate value
+
+            # Update filtered_sweepY and level
+            for v in range(start_index, stop_index + 1):
+                if v in bin_index_set:  # Check if v is in bin_index set
+                    false_index = bin_index.index(v)
+                    level[false_index] = -1
+                    d += 1
+
+                if abf.sweepX[v] < spike_start[0] or abf.sweepX[v] > spike_stop[-1]:
+                    filtered_sweepY[v] = abf.sweepY[
+                        v
+                    ]  # Substitute values outside the spikes
+
+        # Update levels to correct false spikes
         for c in range(len(bin_index) - 1):
             if level[c] == -1 and level[c + 1] != -1:
                 level[c] = 0
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 # the location on your computer where you want the file and the name of the file
@@ -200,7 +248,20 @@ for file in files:
                     break
                 spike_start.append(float(input("Enter Starting Value: ")))
                 spike_stop.append(float(input("Enter Ending Value: ")))
-                large_spike()
+                large_spike(spike_start, spike_stop)
+                # Find the nearest indices in abf.sweepX for spike_start
+                start_indices = [
+                    np.abs(abf.sweepX - start).argmin() for start in spike_start
+                ]
+
+                # Find the nearest indices in abf.sweepX for spike_stop
+                stop_indices = [
+                    np.abs(abf.sweepX - stop).argmin() for stop in spike_stop
+                ]
+
+                # Print the approximate indices
+                print("Approximate start indices:", start_indices)
+                print("Approximate stop indices:", stop_indices)
 
         if userResponse == "graph":
             histogram(spike_start, spike_stop, location, cutoff)
