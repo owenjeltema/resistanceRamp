@@ -173,10 +173,6 @@ def n_reg(volt, cur, n, range, abf_num):
     plt.show()
 
 
-# takes the last n seconds of the graph and takes the average of the current
-# returns a list of the averages at each step
-# amount is the amount of time that is used to get data from
-# to-dp
 def averageI(list, timeshift):
     AverageTimeShiftDataAllSteps = []
     timeArray = [

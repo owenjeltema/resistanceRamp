@@ -24,12 +24,26 @@ rerun a file: "rerun"
 continue to current file: "cont"
 press enter to quickly move through files
 go to specific index: "number"
+
+#User input Cont
+Enter values:
 ```
 
 - `rerun`: shifts index back so previous file can be analyzed again.
 - `cont`: will begin analysis on file.
 - `number`: will go to a specific file number and give index base 0.
 - `enter`: pressing enter will quickly iterate through files and resume `cont` from a new starting position.
+
+## What data looks like
+
+The AS1 Files have 3 axises: voltage, current, and time. Two regressions are performed linear and quadratic.
+using the `cont` and other functions users can see their AS1 file recordings and remove data through the UI the user can `enter values` they wish to remove from the voltages on the upper axis of the graphs below:
+
+Linear regression:
+![alt text](015lin.png)
+
+Quadratic Regression:
+![alt text](015quad.png)
 
 ## Key Functions and Their Roles
 
@@ -62,17 +76,21 @@ What Lipid are you using?
 4: Change lowpass
 5: Add to Excel
 6: Export Excel
+
+#user enters 5
+Histogram cutoff pA by level ground(low high) level0(low high)
 ```
 
 - The `Lipid` holds the type of lipid user used for excel and tracking purposes.
 - The `Remove Noise` allows user to input ranges of noise to be removed by `large_spike`.
 - The `Graph` graphs a hisogram with a specific low-pass filtering then when closed will graph the Ion-Channel data.
+  ![alt text](image.png) whith activity individual openings similar to: ![alt text](Figure_2.png)
 - The `Re-Run` goes back to previous file so it can be re analysised.
 - The `Change Lowpass` changes the lowpass filtering on data.
 - The `Add to Excel` gets histogram bins for activty levels from user and appends to dataframe.
 - The `Export Excel` exports the dataframe to an excel file with all data corresponding to specific file.
-
-Much of the difference between this year's code is in optimizations. Many of the miscellaneous functions were placed in definitions for easy access and error prevention. The bin system, which is defined more fully in last year's README, was scaled back as much as possible, and the old histogram function was removed. In addition to these changes, the **Create_ideal_trace_abf_set_levels** was combined into **Create_ideal_trace_abf_levels_version2**.
+- The `Histogram cutoff` expects a list of numbers which corespond to ranges for level oppenings in the histogram. They are inputed by user into program, then if there are levels that have no relevant activity they can be left as 0 eg `
+  Much of the difference between this year's code is in optimizations. Many of the miscellaneous functions were placed in definitions for easy access and error prevention. The bin system, which is defined more fully in last year's README, was scaled back as much as possible, and the old histogram function was removed. In addition to these changes, the **Create_ideal_trace_abf_set_levels** was combined into **Create_ideal_trace_abf_levels_version2**.
 
 ### New Additions
 

@@ -227,8 +227,6 @@ while x < len(files):
                 user_values = list(map(float, user_input.split()))
                 if len(user_values) % 2 != 0:
                     raise ValueError("You must provide an even number of values.")
-                if any(char.isalpha() for char in user_values):
-                    raise ValueError("Cutoff frequencies must be numeric.")
 
                 for i in range(0, len(user_values), 2):
                     spike_start.append(user_values[i])
