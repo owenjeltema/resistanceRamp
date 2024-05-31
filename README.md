@@ -40,10 +40,10 @@ The AS1 Files have 3 axises: voltage, current, and time. Two regressions are per
 using the `cont` and other functions users can see their AS1 file recordings and remove data through the UI the user can `enter values` they wish to remove from the voltages on the upper axis of the graphs below:
 
 Linear regression:
-![alt text](015lin.png)
+![alt text](Figures/015lin.png)
 
 Quadratic Regression:
-![alt text](015quad.png)
+Figures/015quad.png
 
 ## Key Functions and Their Roles
 
