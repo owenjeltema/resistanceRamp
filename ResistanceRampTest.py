@@ -233,7 +233,6 @@ fileDir = os.listdir()
 i = 0
 while i < len(fileDir):
     file = fileDir[i]
-    tempBool = False
     # Check whether file is in abf format or not
     voltageList = [
         0,
@@ -307,11 +306,11 @@ df1 = pd.DataFrame(
     abf_data,
     columns=[
         "ABF file number",
-        "Condutance Linear",
+        "Conductance Linear",
         "Book Conductance Linear",
         "Resistance Linear",
         "Error in Conductance Linear",
-        "Condutance Quadratic",
+        "Conductance Quadratic",
         "Book Conductance Quadratic",
         "Resistance Quadratic",
         "Error in Conductance Quadratic",
