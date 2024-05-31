@@ -43,7 +43,7 @@ Linear regression:
 ![alt text](Figures/015lin.png)
 
 Quadratic Regression:
-Figures/015quad.png
+![Figures/015quad.png](Figures/015quad.png)
 
 ## Key Functions and Their Roles
 
@@ -84,7 +84,7 @@ Histogram cutoff pA by level ground(low high) level0(low high)
 - The `Lipid` holds the type of lipid user used for excel and tracking purposes.
 - The `Remove Noise` allows user to input ranges of noise to be removed by `large_spike`.
 - The `Graph` graphs a hisogram with a specific low-pass filtering then when closed will graph the Ion-Channel data.
-  ![alt text](image.png) whith activity individual openings similar to: ![alt text](Figure_2.png)
+  ![Figures/HistogramEx.png](Figures/HistogramEx.png) whith activity individual openings similar to: ![Figures/TraceEx.png](Figures/TraceEx.png)
 - The `Re-Run` goes back to previous file so it can be re analysised.
 - The `Change Lowpass` changes the lowpass filtering on data.
 - The `Add to Excel` gets histogram bins for activty levels from user and appends to dataframe.
