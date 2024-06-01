@@ -32,16 +32,18 @@ bins_list = [90, 200, 300]
 voltage = []
 lipid_list = []
 tempature = []
-pA_levels = [0] * 18
+pA_levels = [0] * 22
 time_closed = []
 time_level0 = []
 time_level1 = []
 time_level2 = []
 time_level3 = []
 time_level4 = []
+time_level5 = []
 time_level_r_2 = []
 time_level_r_3 = []
 time_level_r_4 = []
+time_level_r_5 = []
 total_time = []
 data_removed = []
 open_levels = []
@@ -107,7 +109,6 @@ def set_level(abf_file):
     # Calculate average length and weighted mean for each level
     result = find_means(bins_list, level, bin_mean, bin_length)
     net_mean = result[0]
-    # Histogram code
 
 
 def histogram(start, stop, location, cutoff):
@@ -228,11 +229,10 @@ while x < len(files):
                 if len(user_values) % 2 != 0:
                     raise ValueError("You must provide an even number of values.")
 
+                # Appends ranges for removal
                 for i in range(0, len(user_values), 2):
                     spike_start.append(user_values[i])
                     spike_stop.append(user_values[i + 1])
-                    print(spike_start)
-                    print(spike_stop)
 
                 # Process the specified spike ranges
                 large_spike(spike_start, spike_stop)
@@ -263,17 +263,14 @@ while x < len(files):
         elif u == "5":
             try:
                 input_cutoff_Freqs = input(
-                    "Histogram cutoff pA by level ground(low high) level0(low high)"
+                    "Histogram cutoff pA by level ground(low high) level0(low high) level1(low high) level2(low high) level3(low high) level4(low high) level_r_2(low high) level_r_3(low high) level_r_4(low high) level_r_5(low high) level5(low high)"
                 ).strip()
+
                 if any(char.isalpha() for char in input_cutoff_Freqs):
                     raise ValueError("Cutoff frequencies must be numeric.")
 
                 cutoff_Freqs = list(map(float, input_cutoff_Freqs.split()))
 
-                if len(cutoff_Freqs) >= len(pA_levels):
-                    raise ValueError(
-                        "Number of cutoff pA must be less than or equal the number of pA levels."
-                    )
                 for i in range(len(cutoff_Freqs)):
                     pA_levels[i] = cutoff_Freqs[i]
 
@@ -295,7 +292,6 @@ while x < len(files):
                     for i in range(0, len(pA_levels), 2)
                 )
                 open_levels.append(calc_open_levels)
-
                 # Summing up the number of times each value occurs in the file
                 abf_sweepY = np.array(abf.sweepY)
                 pA_levels_pairs = [
@@ -306,19 +302,21 @@ while x < len(files):
 
                 for lower, upper in pA_levels_pairs:
                     time_levels.append(
-                        np.sum((abf_sweepY >= lower) & (abf_sweepY <= upper)) / 20
+                        np.sum((abf_sweepY >= lower) & (abf.sweepY <= upper)) / 20
                     )
 
                 (
                     time_closed_val,
                     time_level0_val,
                     time_level1_val,
-                    time_level2_val,
-                    time_level3_val,
-                    time_level4_val,
                     time_level_r_2_val,
+                    time_level2_val,
                     time_level_r_3_val,
+                    time_level3_val,
                     time_level_r_4_val,
+                    time_level4_val,
+                    time_level_r_5_val,
+                    time_level5_val,
                 ) = time_levels
 
                 lipid_list.append(lipid)
@@ -335,6 +333,8 @@ while x < len(files):
                 time_level_r_2.append(time_level_r_2_val)
                 time_level_r_3.append(time_level_r_3_val)
                 time_level_r_4.append(time_level_r_4_val)
+                time_level_r_5.append(time_level_r_5_val)
+                time_level5.append(time_level5_val)
 
                 spike_start.clear()
                 spike_stop.clear()
@@ -342,7 +342,6 @@ while x < len(files):
             except ValueError as ve:
                 print(f"Invalid input: {ve}")
                 continue
-
         elif u == "6":
             break
     x += 1
@@ -362,9 +361,11 @@ abf_data = {
     "Level 2 time(ms)": time_level2,
     "Level 3 time(ms)": time_level3,
     "Level 4 time(ms)": time_level4,
+    "Level 5 time(ms)": time_level5,
     "Level 2 reduced time(ms)": time_level_r_2,
     "Level 3 reduced time(ms)": time_level_r_3,
     "Level 4 reduced time(ms)": time_level_r_4,
+    "level 5 reduced timme (ms)": time_level_r_5,
     "Data Removed(s)": data_removed,
     "Limits of open levels currents (pA)": open_levels,
 }
@@ -385,9 +386,11 @@ df1 = pd.DataFrame(
         "Level 2 time(ms)",
         "Level 3 time(ms)",
         "Level 4 time(ms)",
+        "Level 5 time(ms)",
         "Level 2 reduced time(ms)",
         "Level 3 reduced time(ms)",
         "Level 4 reduced time(ms)",
+        "Level 5 reduced time(ms)",
         "Data Removed(s)",
         "Limits of open levels currents (pA)",
     ],
