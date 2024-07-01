@@ -1,13 +1,45 @@
-# *Create_ideal_trace_abf_false_positives_version2.py*
+# *Create_ideal_trace_abf_false_positives_version3.py*
+**The function of this code is to analyize the opening lengths and ratios of measured ion channels.**
 
+**For MacOS/Linux:** change any rf"{something}\{something}" to f"{something}/{something}". Note that backslash changes to forward slash.
 
-# **The function of this code is to analyize the opening lengths and ratios of measured ion channels.**
+In summer 2024, **Create_ideal_trace_abf_levels_version2** was overhauled to fix bugs, reduce crashes, optimize performance, and add functionality, culminating in **Create_ideal_trace_abf_levels_version3**. Added functionality includes a peak-finding algorithm, dwell time analysis with filtering, and a more complete excel file export including error bar calculations and other dwell time and general calculations based on filter time.
 
-Much of the difference between this year's code is in optimizations. Many of the misc functions, were placed in defonitions for easy access and error prevention, the bin system which is defined more fully in last year's README was scaled back as was possible, and finally the old histogram function was removed. In addition to these, the **Create_ideal_trace_abf_set_levels**, was combined into the **Create_ideal_trace_abf_levels_version2**.
+**Last year's README Intro:** Much of the difference between this year's code is in optimizations. Many of the misc functions, were placed in defonitions for easy access and error prevention, the bin system which is defined more fully in last year's README was scaled back as was possible, and finally the old histogram function was removed. In addition to these, the **Create_ideal_trace_abf_set_levels**, was combined into the **Create_ideal_trace_abf_levels_version2**.
 **The new additions** are: a new histogram function, os integration and ui, along with functionallity for excel merging.
 
-**How to use**: the directory you are running the code from should be set to where your data is. This means that if you have a folder for data you should be compiling from within that folder, so your current directory is where your data is. This ensures files can be accessed without changing them out individually. resultant excel files will be placed into the same folder and under the same name with a .xlsx. The bottom few lines have a very important script for combining the individual excel files into a singular excel file. Only have that line uncommented when you want to compile a full data sheet.
+# **User Directions**:
+The directory the code runs from must be the folder where the files to be analyzed are stored. Use files from a single data run in each folder. Follow user interface to run code.
 
+**Recommended procedure:**
+Before running program set path to file directory. Setup code by changing variables noted in findLevels() method. Notes for setting variables are stated next to variables.
+1: Choose lipid.
+2: Check histogram and setup code as stated before.
+3: Create new excel file/sheet for data run analysis notes. I recommend columns for file number, temperature, voltage, noise removed, levels manually altered, and notes (Example in "Summer2024 Data and Analysis" folder - "ION Channel Analysis File Notes" excel sheet). Add any other columns you find useful.
+4: Run files as listed in file procedure.
+
+**File procedure**
+1: Graph data and check second figure (capacitance/time figure). List any noisy sections in applicable excel column. If file is too noisy remove entire time range. I recommend removing any good time range with less than 2 seconds between noisy parts to avoid p-hacking.
+2: Remove noise in program from listed excel file ranges.
+3: Check histogram level ranges against program's identified level ranges. Program will print level and reduced level ranges to terminal. Check each level and reduced level against histogram figure and alter if program misses maximum. Program misses are fairly frequent, so make sure to check diligently. Recommendations for setting levels are listed below.
+ -If bounds are not visibly incorrect: leave as is for consistency reasons. 
+ -If only one bound is visibly incorrect: leave other bound as found by program. This is to remain consistent
+ -If bounds of seperate levels are overlapping, choose most obvious minimum as bound for both levels.
+ -If levels -- especially level 0 -- are unclear, check excitations in second figure for clarity.
+4: List any level range changes to be made in corresponding excel column.
+5: Manually set pA level in program to match excel sheet.
+6: Continue to next file.
+7: When finishing analysis (either reaching end of file or exporting data) save "output.xlsx" as another name so file is not overwritten in the future. I recommend {date}+{lipid}
+
+**User interface:**
+1: Next file and record data. Records data to export later and moves on to next file.
+2: Remove noise. Removes capacitance data in time range. This removes capacitance data everywhere in that time range and any analysis will skip over these time intervals.
+3: Graph. Opens histogram figure of capacitance vs frequency. Then opens second figure of capacitance over time. Both must be closed before continuing.
+4: Manually set pA level. Set all or individual capacitance level ranges (in pA/pF) based on histogram appearance. Individual changes are recommended in almost any case.
+5: Change file. Rerun previous file or search for file based on 3-number code.
+6: Change settings. Change cutoff frequency or histogram x-axis range.
+7: Export raw data in time range. Export dwell times per level or capacitance data in time range in excel sheet.
+8: End analysis and export excel. Stop program early and export excel sheet.
 
 # **Definition of terms:**
 Cutoff--the amount of lowpass filtering being put onto the data.
