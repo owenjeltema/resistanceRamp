@@ -64,57 +64,97 @@ Quadratic Regression:
 - **Limitations**: Some functionality, such as adjusting datasets alongside filtering, is not fully implemented. This can create challenges, particularly for graphing with the `n_reg` function.
 
 # _Create_ideal_trace_abf_false_positives_version2.py_
+### For MacOS/Linux: change any rf"{something}\\{something}" to f"{something}/{something}". Note that backslash changes to forward slash.
 
 ## The function of this code is to analyze the opening lengths and ratios of measured ion channels.
-
 ```python
-What Lipid are you using?
-#user Responds
-1: Remove Noise
-2: Graph
-3: Re-Run
-4: Change lowpass
-5: Add to Excel
-6: Export Excel
+select lipid:
+1: DOPE
+2: DOPC
+3: POPC
 
-#user enters 5
-Histogram cutoff pA by level ground(low high) level0(low high)
+#user Responds
+
+1: Next file and record data
+2: Remove noise
+3: Graph
+4: Manually set pA level
+5: Change file
+6: Change settings
+7: Export raw data in time range
+8: End analysis and export excel
+
+#user enters 2
+
+Ion channel activation graph removed data by user input [low high low high...]
 ```
 
 - The `Lipid` holds the type of lipid user used for excel and tracking purposes.
+- The `Next file and record data` records data for excel output later and proceeds to next file.
 - The `Remove Noise` allows user to input ranges of noise to be removed by `large_spike`.
 - The `Graph` graphs a hisogram with a specific low-pass filtering then when closed will graph the Ion-Channel data.
   ![Figures/HistogramEx.png](Figures/HistogramEx.png) whith activity individual openings similar to: ![Figures/TraceEx.png](Figures/TraceEx.png)
-- The `Re-Run` goes back to previous file so it can be re analysised.
-- The `Change Lowpass` changes the lowpass filtering on data.
-- The `Add to Excel` gets histogram bins for activty levels from user and appends to dataframe.
-- The `Export Excel` exports the dataframe to an excel file with all data corresponding to specific file.
-- The `Histogram cutoff` expects a list of numbers which corespond to ranges for level oppenings in the histogram. They are inputed by user into program, then if there are levels that have no relevant activity they can be left as 0 eg `
-  Much of the difference between this year's code is in optimizations. Many of the miscellaneous functions were placed in definitions for easy access and error prevention. The bin system, which is defined more fully in last year's README, was scaled back as much as possible, and the old histogram function was removed. In addition to these changes, the **Create_ideal_trace_abf_set_levels** was combined into **Create_ideal_trace_abf_levels_version2**.
+  The `Manually set pA level` prompts the user to manually set individual or all pA level bins.
+- The `Change file` eithergoes back to previous file so it can be re analysised or jumps to file input by user (with input: `000`). Does not record data from current file.
+- The `Change settings` prompts user to change the lowpass filtering on data or the histogram domain.
+- The `Export raw data in time range` prompts user to export raw ion channel activation data over a time range or to export all dwell times to an excel file.
+- The `End analysis and export excel` ends the program and exports the dataframe to an excel file with all data corresponding to specific file.
+  
+  In summer 2024, Create_ideal_trace_abf_levels_version2 was overhauled to fix bugs, reduce crashes, optimize performance, and add functionality, culminating in Create_ideal_trace_abf_levels_version3. Added functionality includes a peak-finding algorithm, dwell time analysis with filtering, and a more complete excel file export including error bar calculations and other dwell time and general calculations based on filter time.
 
-### New Additions
+## Functionality:
+- Low-pass filtering of ion channel excitation data.
+- Automated (although imperfect) pA level binning.
+- Dwell time analysis.
+- Dynamic functionality based on user inputs for graph visuals, cutoff, etc.
+- Automated calculation for analysis, including error bars.
 
-- A new histogram function
-- OS integration and UI
-- Functionality for Excel merging
+## Recommended procedure:
+The directory the code runs from must be the folder where the files to be analyzed are stored. Use files from a single data run in each folder. Follow user interface to run code.
+Before running program set path to file directory. Setup code by changing variables noted in findLevels() method. Notes for setting variables are stated next to variables. - 1: Choose lipid. 
+- 2: Check histogram and setup code as stated before.
+- 3: Create new excel file/sheet for data run analysis notes. I recommend columns for file number, temperature, voltage, noise removed, levels manually altered, and notes (Example in "Summer2024 Data and Analysis" folder - "ION Channel Analysis File Notes" excel sheet). Add any other columns you find useful.
+- 4: Run files as listed in file procedure.
 
-### How to Use
+### File procedure:
+- 1: Graph data with `3: Graph` and check second figure (capacitance/time figure). List any noisy sections in applicable excel column. If file is too noisy remove entire time range. I recommend removing any good time range with less than 2 seconds between noisy parts to avoid p-hacking.
+- 2: Remove noise in program with `2: Remove noise` from listed excel file ranges.
+- 3: Check histogram level ranges against program's identified level ranges. Program will print level and reduced level ranges to terminal. Check each level and reduced level against histogram figure and alter if program misses maximum. Program misses are fairly frequent, so make sure to check diligently. Recommendations for setting levels are listed below.
+  -If bounds are not visibly incorrect: leave as is for consistency reasons.
+  -If only one bound is visibly incorrect: leave other bound as found by program. This is to remain consistent.
+  -If bounds of seperate levels are overlapping, choose most obvious minimum as bound for both levels.
+  -If levels -- especially level 0 -- are unclear, check excitations in second figure for clarity.
+- 4: List any level range changes to be made in corresponding excel column.
+- 5: Manually set pA level in program to match excel sheet.
+- 6: Continue to next file.
+- 7: When finishing analysis (either reaching end of file or exporting data) save "output.xlsx" as another name so file is not overwritten in the future. I recommend {date}+{lipid}
 
-The directory you are running the code from should be set to where your data is. This means that if you have a folder for data, you should be compiling from within that folder, so your current directory is where your data is. This ensures files can be accessed without changing them out individually. Resultant Excel files will be placed into the same folder and under the same name with a `.xlsx` extension. The bottom few lines have a very important script for combining the individual Excel files into a single Excel file. Only have that line uncommented when you want to compile a full data sheet.
-
-## User Interface
+## User interface: 
+- `1: Next file and record data`: Records data to export later and moves on to next file.
+- `2: Remove noise`: Removes capacitance data in time range. This removes capacitance data everywhere in that time range and any analysis will skip over these time intervals. 
+- `3: Graph`: Opens histogram figure of capacitance vs frequency. Then opens second figure of capacitance over time. Both must be closed before continuing. 
+- `4: Manually set pA level`: Set all or individual capacitance level ranges (in pA/pF) based on histogram appearance. Individual changes are recommended in almost any case. 
+- `5: Change file`: Rerun previous file or search for file based on 3-number code. 
+- `6: Change settings`: Change cutoff frequency or histogram x-axis range. 
+- `7: Export raw data in time range`: Export dwell times per level or capacitance data in time range in excel sheet. 
+- `8: End analysis and export excel`: Stop program early and export excel sheet.
 
 ## Definition of Terms
-
 - **Cutoff**: The amount of low pass filtering being applied to the data.
 - **Voltage**: The voltage at which data was taken.
-- **pA levels**: These are the variables users will input to determine the activation levels, such as when the ion channel is closed. This separates data into helpful bins for analysis in Excel.
+- **pA levels**: These are the variables to determine the activation levels, such as when the ion channel is closed. This separates data into helpful bins for analysis in Excel.
 
 ## Key Functions
-
-- **Set Level Function**: Makes the variables the rest of the program uses, along with helping with formatting the ABF file reader.
+- **Set Level**: Makes the variables the rest of the program uses, along with helping with formatting the ABF file reader.
+- **Adjust Data**: Sets up data for analysis in set level function. Seperated for organization.
 - **Histogram**: Takes the file you're in, the cutoff (low pass), and two arrays. It then graphs the filtered sweep. When graphing, avoid removing 0 or 60; instead, use 59.99 and 0.01.
 - **Large Spike**: This method removes noise data from the arrays, so they won't be sampled for the histogram.
+- **Find Levels**: This method makes automated guesses for each pA level -- must be checked by user.
+- **Calculate Histogram Times**: Sorts activation levels (in pA) into frequency bins for analysis.
+- **Find Dwell Times**: Finds dwell times for each  level based on levels based on either computer guess or user input. Filters dwell times based on set time in given dwell.
+- **Analyze Dwell Times**: Does math on dwell time list.
+- **Record Dwell Times**: Records math done in analyze dwell times to be exported in excel. Seperated for organization.
+- **Record General Data**: Records math for non-dwell-time-related data to be exported in excel.
 - **The Main UI**: Has features for moving to different files, noise removal, and graphing data. It allows users to segment activity into bins (e.g., closed, lv 0, lv 1, lv 2, etc.) and saves these settings between files.
 
 ### Additional Features
