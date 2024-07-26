@@ -8,11 +8,12 @@ In summer 2024, **Create_ideal_trace_abf_levels_version2** was overhauled to fix
 **Last year's README Intro**: Much of the difference between this year's code is in optimizations. Many of the misc functions, were placed in defonitions for easy access and error prevention, the bin system which is defined more fully in last year's README was scaled back as was possible, and finally the old histogram function was removed. In addition to these, the **Create_ideal_trace_abf_set_levels**, was combined into the **Create_ideal_trace_abf_levels_version2**.
 **The new additions** are: a new histogram function, os integration and ui, along with functionallity for excel merging.
 
+
 # **User Directions**:
 The directory the code runs from must be the folder where the files to be analyzed are stored. Use files from a single data run in each folder. Follow user interface to run code.
 
 **Recommended procedure**:
-Before running program set path to file directory. Setup code by changing variables noted in findLevels() method. Notes for setting variables are stated next to variables.
+Before running program set path to file directory. Setup code by changing variables noted in find_levels method. Notes for setting variables are stated next to variables. Make sure to check cutoff frequency values (can be changed in the program).
 1. Choose lipid.
 2. Check histogram and setup code as stated before.
 3. Create new excel file/sheet for data run analysis notes. I recommend columns for file number, temperature, voltage, noise removed, levels manually altered, and notes (Example in "Summer2024 Data and Analysis" folder - "ION Channel Analysis File Notes" excel sheet). Add any other columns you find useful.
@@ -31,6 +32,7 @@ Before running program set path to file directory. Setup code by changing variab
 6. Continue to next file.
 7. When finishing analysis (either reaching end of file or exporting data) save "output.xlsx" as another name so file is not overwritten in the future. I recommend {date}+{lipid}
 
+
 **User interface:**
 1. Next file and record data. Records data to export later and moves on to next file.
 2. Remove noise. Removes capacitance data in time range. This removes capacitance data everywhere in that time range and any analysis will skip over these time intervals.
@@ -40,6 +42,7 @@ Before running program set path to file directory. Setup code by changing variab
 6. Change settings. Change cutoff frequency or histogram x-axis range.
 7. Export raw data in time range. Export dwell times per level or capacitance data in time range in excel sheet.
 8. End analysis and export excel. Stop program early and export excel sheet.
+
 
 # **Definition of terms:**
 - Cutoff-- lowpass filter cutoff frequency [Hz].
@@ -53,6 +56,7 @@ Before running program set path to file directory. Setup code by changing variab
 - histogram_max-- maximum value that histogram considers for activation.
 - files-- list of all files in repository sorted by number.
 
+
 ## Functions:
 **set_level**: initializes variables program uses, formats abf file reader.
 
@@ -60,7 +64,30 @@ Before running program set path to file directory. Setup code by changing variab
 
 **large_spike**: Noise removal. Removes data from code and deletes spike ranges set by user from the arrays so they are not sampled for the histogram.
 
-**calculate_histogram_times**: 
+**calculate_histogram_times**: Check all pA_levels values and find/tally which bin they belong to.
+
+**find_levels**: Finds pA levels by analyzing frequency spikes based on set spacing and other constants. Can be inaccurate and positioning of bins is dependent on user-set variables at the beginning of the function (shown below):
+
+    `#---------------------------------------------------------- These variables should be changed based on file for best performance -----------------------------
+    min_frequency = 3               # between 3-10 depending on how noisy file is. lower for nice data with less noise.
+    reduced_buffer = 5              # 5 for narrow peaks or normally, 10 for wider peaks.
+    ground_level_max = 15           # maximum that ground level bin is allowed in file.
+    level_0_max = 60                # maximum that level 0 bin is allowed in file.
+    level_difference_min = 100      # minimum levels can be seperated by. Set with level 0-1 gap on lowest-temp file (should be slightly smaller than actual gap, maybe 10 pA?).
+    level_difference_max = 250      # maximum levels can be seperated by. Set with higher level gap on high-temp files (should be slightly larger than actual gap).
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------`
+
+These variables are acceptable for now but miss several levels and have been the cause of numerous bugs, especially with noisy data. Values shown above were tested on nice data.
+
+Testing for this function was done on the first dataset produced in 2024, which was abnormally nice data. This could be improved upon for more generalized datasets with more noise.
+
+**find_dwell_times**: Goes through  abf file and checks for series' of points that occur in the same pA_level, returning list of levels and corresponding dwell times. Filters out dwell times below a set minimum time.
+
+**analyze_dwell_times**: Does all math for error bars and adds to a dictionary that eventually is added to output excel sheet.
+
+**record_dwell_times**: Preps and records dwell times in datastructures to be exported to excel.
+
+**record_general_data**: Records any non-error-bar-related information to datastructures to be exported to excel.
 
 **The main UI**: 
 - The file navigation system is used when finishing analysis on a file or when the user prompts the program to go to a specific file. Navigation is done with the run number, or the last three numbers of the abf file name.
@@ -68,7 +95,7 @@ Before running program set path to file directory. Setup code by changing variab
 
 **Create_ideal_trace_abf_false_positives_version2**: Allows a person to look at the idealized trace and identify false positives, then redraws the trace with the false positives accounted for. It also recalculates the average length and means. It finally formats and produces the excel file. 
 
-**low_pass_filter_abf_version1**: A low pass filter 
+**low_pass_filter_abf_version1**: A virtual low pass filter.
 
 **ideal_trace_same_bin_version2**: a subroutine to determine if two values are in the same bin as each other.  
 
@@ -81,8 +108,6 @@ Before running program set path to file directory. Setup code by changing variab
 **Ideal_trace_graph_formatting_version2**: Has the formatting to graph the filtered data, idealized trace and dotted lines at the bin junctions with a scrollbar. It also has an input to adjust the height of the graph. 
 
 
-
-
 # **Inputs**
 **Create_ideal_trace_abf_false_positives_version2**:
 
@@ -91,3 +116,17 @@ Before running program set path to file directory. Setup code by changing variab
 **spike_stop**: a list with the corresponding approximate stop location for a large noise spike. Every level change between these values is categorized as noise and assigned to the noise level and does not affect any mean values. Must be the same length as spike_start. 
 
 # **Errors**
+Former errors that have been solved include:
+   - Problems with binning levels to a preset level that is defaulted to a very low value. Solved by removing functionality of extending bin size for pA levels below a certain point.
+   - Crashes relating to list indexing. Solved with try:except blocks.
+
+Current errors (list here):
+   - Crash occurs while analyzing some files that are abnormally small. Believed to be fixed but may have occurred after fix implemented. If this continues, use try:except blocks when applicable.
+
+# **Next Steps**:
+Possible ways to improve this software in the future. Were not done this year due to time constraints and needs at the time.
+1. Implement better way to adjust and specify preset variables given in find_levels -- possibly based on input lipid type or as setting?
+2. Improve find_levels functionality. More intelligent level finding ability could be helpful in more accurately binning levels.
+3. Change to object-oriented program with focus on organization.
+4. Graphical user interface. Possibly add drag-and-drop binning and other, easier to use UI.
+5. Efficiency Improvements. Improve computation speed. Time sinks include histogram seperation, dwell time analysis, and anything else that iterates through the entire abf file.
