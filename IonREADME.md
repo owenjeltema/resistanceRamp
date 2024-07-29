@@ -32,16 +32,32 @@ Before running program set path to file directory. Setup code by changing variab
 6. Continue to next file.
 7. When finishing analysis (either reaching end of file or exporting data) save "output.xlsx" as another name so file is not overwritten in the future. I recommend {date}+{lipid}
 
-
 **User interface:**
-1. Next file and record data. Records data to export later and moves on to next file.
-2. Remove noise. Removes capacitance data in time range. This removes capacitance data everywhere in that time range and any analysis will skip over these time intervals.
-3. Graph. Opens histogram figure of capacitance vs frequency. Then opens second figure of capacitance over time. Both must be closed before continuing.
-4. Manually set pA level. Set all or individual capacitance level ranges (in pA/pF) based on histogram appearance. Individual changes are recommended in almost any case.
-5. Change file. Rerun previous file or search for file based on 3-number code.
-6. Change settings. Change cutoff frequency or histogram x-axis range.
-7. Export raw data in time range. Export dwell times per level or capacitance data in time range in excel sheet.
-8. End analysis and export excel. Stop program early and export excel sheet.
+Select Lipid (DOPE, DOPC, POPC)
+Executive UI:
+1. `Next file and record data.` Records data to export later and moves on to next file.\n
+2. `Remove noise.` Removes capacitance data in time range. This removes capacitance data everywhere in that time range and any analysis will skip over these time intervals.
+3. `Graph.` Opens histogram figure of capacitance vs frequency. Then opens second figure of capacitance over time. Both must be closed before continuing.
+4. `Manually set pA level.` Set all or individual capacitance level ranges (in pA/pF) based on histogram appearance. Individual changes are recommended in almost any case.
+   1. `Individual`: Choose individual file.
+      - `Select level`: `g: Ground`; `0-5: level 0-5`; `1r-5r: reduced level 1-5`.
+      - `Input level {n} lower bound.`
+      - `Input level {n} upper bound.`
+   2. `All`: Goes through each file and prompts for each level's upper and lower bound.
+5. `Change file.` Rerun previous file or search for file based on 3-number code.
+   1. `Rerun last file`: Changes path to file with next lowest ID number (i.e. 005)
+   2. `Select file number`: Changes path to file user inputs.
+        - `Select 3-digit file code i.e. 005 (done to abort):` Change path to user input file or cancels with 'done'.
+6. `Change settings.` Change cutoff frequency or histogram x-axis range.
+   1. `Cutoff`: Manually set cutoff range.
+      - `Enter cutoff pA value:`
+   2. `Histogram range`: Manually set histogram range for better viewing experience.
+      - `Minimum histogram range:` Input minimum histogram range desired.
+      - `Maximum histogram range:` Input maximum histogram range.
+7. `Export raw data in time range.` Export dwell times per level or capacitance data in time range in excel sheet.
+   1. `Export Dwell times`: Exports excel file with list of all dwells by dwell time
+   2. `Export capacitance levels`: Exports excel file with capacitance measurements within time range. Used previously with making activation figures over a nice activation period.
+8. `End analysis and export excel.` Stop program early and export excel sheet.
 
 
 # **Definition of terms:**
@@ -105,15 +121,8 @@ Testing for this function was done on the first dataset produced in 2024, which 
 
 **ideal_trace_make_ideal_Y_list_version2**: Takes the mean of each level, the list of levels, and the length of each event to create a list of Y values that form the idealized trace.  
 
-**Ideal_trace_graph_formatting_version2**: Has the formatting to graph the filtered data, idealized trace and dotted lines at the bin junctions with a scrollbar. It also has an input to adjust the height of the graph. 
+**Ideal_trace_graph_formatting_version2**: Has the formatting to graph the filtered data, idealized trace and dotted lines at the bin junctions with a scrollbar. It also has an input to adjust the height of the graph.
 
-
-# **Inputs**
-**Create_ideal_trace_abf_false_positives_version2**:
-
-**spike_start**: a list with the approximate start locations for large noise spikes, can have multiple starts for different spikes, but there is usually only one 
-
-**spike_stop**: a list with the corresponding approximate stop location for a large noise spike. Every level change between these values is categorized as noise and assigned to the noise level and does not affect any mean values. Must be the same length as spike_start. 
 
 # **Errors**
 Former errors that have been solved include:
@@ -122,6 +131,7 @@ Former errors that have been solved include:
 
 Current errors (list here):
    - Crash occurs while analyzing some files that are abnormally small. Believed to be fixed but may have occurred after fix implemented. If this continues, use try:except blocks when applicable.
+
 
 # **Next Steps**:
 Possible ways to improve this software in the future. Were not done this year due to time constraints and needs at the time.
